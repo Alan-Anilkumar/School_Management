@@ -1,3 +1,4 @@
+# models.py
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.hashers import make_password
 from django.db import models
@@ -5,9 +6,18 @@ from datetime import datetime
 import random
 
 
+class Department(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    description = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+
 class User(AbstractUser):
     GENDER_CHOICES = [("M", "Male"), ("F", "Female"), ("O", "Other")]
-
     registration_id = models.CharField(max_length=10, unique=True, editable=False)
     phone_number = models.CharField(max_length=15, null=True)
     address = models.TextField(null=True)
@@ -38,7 +48,7 @@ class User(AbstractUser):
 
 
 class Admin(User):
-    department = models.CharField(max_length=50, blank=True)
+    department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True)
     qualification = models.CharField(max_length=100, blank=True)
 
     class Meta:
@@ -52,7 +62,7 @@ class Admin(User):
 
 
 class Staff(User):
-    department = models.CharField(max_length=50)
+    department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True)
     designation = models.CharField(max_length=50)
     qualification = models.CharField(max_length=100)
 
