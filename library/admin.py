@@ -1,3 +1,5 @@
 from django.contrib import admin
+from .models import LibraryRecord, Book
 
-# Register your models here.
+admin.site.register(LibraryRecord)
+admin.site.register(Book)

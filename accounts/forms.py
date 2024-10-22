@@ -89,7 +89,9 @@ class AdminForm(BaseCustomUserForm):
             "department": forms.Select(attrs={"class": "form-select"}),
             "gender": forms.Select(attrs={"class": "form-select"}),
             "date_of_birth": DateInput(attrs={"class": "form-control", "type": "date"}),
-            "profile_picture": forms.ClearableFileInput(attrs={"class": "form-control"}),
+            "profile_picture": forms.ClearableFileInput(
+                attrs={"class": "form-control"}
+            ),
             "qualification": forms.TextInput(attrs={"class": "form-control"}),
             "username": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "Enter your username"}
@@ -156,7 +158,9 @@ class StaffForm(BaseCustomUserForm):
             "department": forms.Select(attrs={"class": "form-select"}),
             "gender": forms.Select(attrs={"class": "form-select"}),
             "date_of_birth": DateInput(attrs={"class": "form-control", "type": "date"}),
-            "profile_picture": forms.ClearableFileInput(attrs={"class": "form-control"}),
+            "profile_picture": forms.ClearableFileInput(
+                attrs={"class": "form-control"}
+            ),
             "qualification": forms.TextInput(attrs={"class": "form-control"}),
             "username": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "Enter your username"}
@@ -217,7 +221,9 @@ class LibrarianForm(BaseCustomUserForm):
             "gender": forms.Select(attrs={"class": "form-select"}),
             "date_of_birth": DateInput(attrs={"class": "form-control", "type": "date"}),
             "joining_date": DateInput(attrs={"class": "form-control", "type": "date"}),
-            "profile_picture": forms.ClearableFileInput(attrs={"class": "form-control"}),
+            "profile_picture": forms.ClearableFileInput(
+                attrs={"class": "form-control"}
+            ),
             "qualification": forms.TextInput(attrs={"class": "form-control"}),
             "username": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "Enter your username"}
@@ -238,6 +244,52 @@ class LibrarianForm(BaseCustomUserForm):
                 }
             ),
             "emergency_contact": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Enter your phone number",
+                }
+            ),
+        }
+
+    address = forms.CharField(
+        required=True,
+        widget=forms.Textarea(
+            attrs={
+                "class": "form-control",
+                "rows": 2,
+                "placeholder": "Enter your address",
+            }
+        ),
+    )
+
+
+class StudentForm(forms.ModelForm):
+    class Meta:
+        model = Student
+        fields = [
+            "first_name",
+            "last_name",
+            "grade",
+            "admission_date",
+            "parent_name",
+            "parent_contact_number",
+            "address",
+        ]
+        widgets = {
+            "first_name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Enter your first name"}
+            ),
+            "last_name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Enter your last name"}
+            ),
+            "admission_date": DateInput(
+                attrs={"class": "form-control", "type": "date"}
+            ),
+            "grade": forms.Select(attrs={"class": "form-select"}),
+            "parent_name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Enter your last name"}
+            ),
+            "parent_contact_number": forms.TextInput(
                 attrs={
                     "class": "form-control",
                     "placeholder": "Enter your phone number",

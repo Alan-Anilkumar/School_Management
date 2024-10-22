@@ -40,7 +40,9 @@ class User(AbstractUser):
 
 
 class Admin(User):
-    department = models.ForeignKey("management.Department", on_delete=models.SET_NULL, null=True)
+    department = models.ForeignKey(
+        "management.Department", on_delete=models.SET_NULL, null=True
+    )
     qualification = models.CharField(max_length=100, blank=True)
 
     class Meta:
@@ -54,7 +56,9 @@ class Admin(User):
 
 
 class Staff(User):
-    department = models.ForeignKey("management.Department", on_delete=models.SET_NULL, null=True)
+    department = models.ForeignKey(
+        "management.Department", on_delete=models.SET_NULL, null=True
+    )
     designation = models.CharField(max_length=50)
     qualification = models.CharField(max_length=100)
 
@@ -86,6 +90,15 @@ class Student(User):
     admission_date = models.DateField()
     parent_name = models.CharField(max_length=100)
     parent_contact_number = models.CharField(max_length=15)
+
+    class Meta:
+        verbose_name = "Student"
+        verbose_name_plural = "Student"
+
+    def save(self, *args, **kwargs):
+        if not self.registration_id:
+            self.registration_id = self.generate_registration_id(prefix="LIB")
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} - {self.grade}"

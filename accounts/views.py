@@ -11,8 +11,8 @@ from django.views.generic import (
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import Admin, Staff, Librarian
-from .forms import AdminForm, StaffForm, LibrarianForm
+from .models import Admin, Staff, Librarian, Student
+from .forms import AdminForm, StaffForm, LibrarianForm, StudentForm
 
 
 @login_required
@@ -34,11 +34,11 @@ def user_redirect(request):
 #     template_name = "school/department/list.html"
 #     context_object_name = "departments"
 #     ordering = ["name"]
-#     paginate_by = 10
+#
 
 #     def get_context_data(self, **kwargs):
 #         context = super().get_context_data(**kwargs)
-#         context["title"] = "Departments"
+#         context["page_title"] = "Departments"
 #         return context
 
 
@@ -50,7 +50,7 @@ def user_redirect(request):
 
 #     def get_context_data(self, **kwargs):
 #         context = super().get_context_data(**kwargs)
-#         context["title"] = "Create Department"
+#         context["page_title"] = "Create Department"
 #         context["button_text"] = "Create"
 #         return context
 
@@ -72,7 +72,7 @@ def user_redirect(request):
 
 #     def get_context_data(self, **kwargs):
 #         context = super().get_context_data(**kwargs)
-#         context["title"] = "Update Department"
+#         context["page_title"] = "Update Department"
 #         context["button_text"] = "Update"
 #         return context
 
@@ -107,11 +107,10 @@ class AdminListView(LoginRequiredMixin, ListView):
     template_name = "admin/admin_list.html"
     context_object_name = "admins"
     ordering = ["username"]
-    paginate_by = 10
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["title"] = "Administrators"
+        context["page_title"] = "Administrators"
         return context
 
 
@@ -134,7 +133,7 @@ class AdminCreateView(LoginRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["title"] = "Create Administrator"
+        context["page_title"] = "Create Administrator"
         context["button_text"] = "Create"
         return context
 
@@ -156,7 +155,7 @@ class AdminUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["title"] = "Update Administrator"
+        context["page_title"] = "Update Administrator"
         context["button_text"] = "Update"
         return context
 
@@ -172,17 +171,14 @@ class AdminUpdateView(LoginRequiredMixin, UpdateView):
 
 class AdminDeleteView(LoginRequiredMixin, DeleteView):
     model = Admin
-    template_name = "admin/admin_detail.html"
     success_url = reverse_lazy("admin-list")
 
+    def get(self, request, *args, **kwargs):
+        return self.delete(request, *args, **kwargs)
+
     def delete(self, request, *args, **kwargs):
-        try:
-            response = super().delete(request, *args, **kwargs)
-            messages.success(request, "Administrator deleted successfully.")
-            return response
-        except Exception as e:
-            messages.error(request, f"Error deleting administrator: {str(e)}")
-            return redirect("admin-list")
+        messages.success(request, "Librarian deleted successfully.")
+        return super().delete(request, *args, **kwargs)
 
 
 # Staff Views
@@ -191,11 +187,10 @@ class StaffListView(LoginRequiredMixin, ListView):
     template_name = "staff/staff_list.html"
     context_object_name = "staffs"
     ordering = ["username"]
-    paginate_by = 10
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["title"] = "Staff Members"
+        context["page_title"] = "Staff Members"
         return context
 
 
@@ -227,6 +222,7 @@ class StaffCreateView(LoginRequiredMixin, CreateView):
         return response
 
     def form_invalid(self, form):
+        messages.success(self.request, "An error occurred creating failed.")
         return redirect("staff_list")
 
 
@@ -247,22 +243,20 @@ class StaffUpdateView(LoginRequiredMixin, UpdateView):
         return response
 
     def form_invalid(self, form):
+        messages.success(self.request, "An error occurred updating failed.")
         return redirect("staff_list")
 
 
 class StaffDeleteView(LoginRequiredMixin, DeleteView):
     model = Staff
-    template_name = "staff/add_update_staff.html"
     success_url = reverse_lazy("staff_list")
 
+    def get(self, request, *args, **kwargs):
+        return self.delete(request, *args, **kwargs)
+
     def delete(self, request, *args, **kwargs):
-        try:
-            response = super().delete(request, *args, **kwargs)
-            messages.success(request, "Staff member deleted successfully.")
-            return response
-        except Exception as e:
-            messages.error(request, f"Error deleting staff member: {str(e)}")
-            return redirect("staff_list")
+        messages.success(request, "Librarian deleted successfully.")
+        return super().delete(request, *args, **kwargs)
 
 
 # Librarian Views
@@ -271,11 +265,10 @@ class LibrarianListView(LoginRequiredMixin, ListView):
     template_name = "librarian/librarian_list.html"
     context_object_name = "librarians"
     ordering = ["username"]
-    paginate_by = 10
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["title"] = "Librarians"
+        context["page_title"] = "Librarians"
         return context
 
 
@@ -298,8 +291,7 @@ class LibrarianCreateView(LoginRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["title"] = "Create Librarian"
-        context["button_text"] = "Create"
+        context["page_title"] = "Create Librarian"
         return context
 
     def form_valid(self, form):
@@ -308,6 +300,7 @@ class LibrarianCreateView(LoginRequiredMixin, CreateView):
         return response
 
     def form_invalid(self, form):
+        messages.success(self.request, "An error occurred creating failed.")
         return redirect("librarian_list")
 
 
@@ -328,19 +321,93 @@ class LibrarianUpdateView(LoginRequiredMixin, UpdateView):
         return response
 
     def form_invalid(self, form):
+        messages.success(self.request, "An error occurred updating failed.")
         return redirect("librarian_list")
 
 
 class LibrarianDeleteView(LoginRequiredMixin, DeleteView):
     model = Librarian
-    template_name = "librarian/add_update_librarian.html"
     success_url = reverse_lazy("librarian_list")
 
+    def get(self, request, *args, **kwargs):
+        return self.delete(request, *args, **kwargs)
+
     def delete(self, request, *args, **kwargs):
-        try:
-            response = super().delete(request, *args, **kwargs)
-            messages.success(request, "Librarian deleted successfully.")
-            return response
-        except Exception as e:
-            messages.error(request, f"Error deleting librarian: {str(e)}")
-            return redirect("librarian-list")
+        messages.success(request, "Librarian deleted successfully.")
+        return super().delete(request, *args, **kwargs)
+
+
+class StudentListView(LoginRequiredMixin, ListView):
+    model = Student
+    template_name = "student_list.html"
+    context_object_name = "students"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Student List"
+        return context
+
+
+class StudentDetailView(LoginRequiredMixin, DetailView):
+    model = Student
+    template_name = "student_detail.html"
+    context_object_name = "students"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Student List"
+        return context
+
+
+class StudentCreateView(LoginRequiredMixin, CreateView):
+    model = Student
+    template_name = "add_update_student.html"
+    form_class = StudentForm
+    success_url = reverse_lazy("student_list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Create STudent"
+        return context
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, "Student  created successfully.")
+        return response
+
+    def form_invalid(self, form):
+        messages.success(self.request, "An error occurred creating failed.")
+        return redirect("staff_list")
+
+
+class StudentUpdateView(LoginRequiredMixin, UpdateView):
+    model = Student
+    template_name = "add_update_student.html"
+    form_class = StudentForm
+    success_url = reverse_lazy("student_list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Update STudent"
+        return context
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, "Student  updated successfully.")
+        return response
+
+    def form_invalid(self, form):
+        messages.success(self.request, "An error occurred updating failed.")
+        return redirect("staff_list")
+
+
+class StudentDeleteView(LoginRequiredMixin, DeleteView):
+    model = Student
+    success_url = reverse_lazy("student_list")
+
+    def get(self, request, *args, **kwargs):
+        return self.delete(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, "Librarian deleted successfully.")
+        return super().delete(request, *args, **kwargs)
