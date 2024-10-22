@@ -11,99 +11,94 @@ from django.views.generic import (
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import Department, Admin, Staff, Librarian
-from .forms import DepartmentForm, AdminForm, StaffForm, LibrarianForm
+from .models import Admin, Staff, Librarian
+from .forms import AdminForm, StaffForm, LibrarianForm
 
 
 @login_required
 def user_redirect(request):
     """Redirects users to their respective dashboards based on user class."""
 
-    if request.user.is_superuser:
-        return redirect("admin:index")
-
-    if hasattr(request.user, "doctor"):
-        return redirect("doctor_dashboard")
-    elif hasattr(request.user, "operator"):
-        return redirect("operator_dashboard")
-    elif hasattr(request.user, "patient"):
-        return redirect("patient_dashboard")
-    elif hasattr(request.user, "admin"):
+    if hasattr(request.user, "admin"):
         return redirect("admin_dashboard")
+    elif hasattr(request.user, "staff"):
+        return redirect("staff_dashboard")
+    elif hasattr(request.user, "librarian"):
+        return redirect("librarian_dashboard")
     else:
         raise Http404("You are not registered with the system")
 
 
-class DepartmentListView(LoginRequiredMixin, ListView):
-    model = Department
-    template_name = "school/department/list.html"
-    context_object_name = "departments"
-    ordering = ["name"]
-    paginate_by = 10
+# class DepartmentListView(LoginRequiredMixin, ListView):
+#     model = Department
+#     template_name = "school/department/list.html"
+#     context_object_name = "departments"
+#     ordering = ["name"]
+#     paginate_by = 10
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["title"] = "Departments"
-        return context
-
-
-class DepartmentCreateView(LoginRequiredMixin, CreateView):
-    model = Department
-    form_class = DepartmentForm
-    template_name = "school/department/form.html"
-    success_url = reverse_lazy("department-list")
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["title"] = "Create Department"
-        context["button_text"] = "Create"
-        return context
-
-    def form_valid(self, form):
-        try:
-            response = super().form_valid(form)
-            messages.success(self.request, "Department created successfully.")
-            return response
-        except Exception as e:
-            messages.error(self.request, f"Error creating department: {str(e)}")
-            return super().form_invalid(form)
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context["title"] = "Departments"
+#         return context
 
 
-class DepartmentUpdateView(LoginRequiredMixin, UpdateView):
-    model = Department
-    form_class = DepartmentForm
-    template_name = "school/department/form.html"
-    success_url = reverse_lazy("department-list")
+# class DepartmentCreateView(LoginRequiredMixin, CreateView):
+#     model = Department
+#     form_class = DepartmentForm
+#     template_name = "school/department/form.html"
+#     success_url = reverse_lazy("department-list")
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["title"] = "Update Department"
-        context["button_text"] = "Update"
-        return context
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context["title"] = "Create Department"
+#         context["button_text"] = "Create"
+#         return context
 
-    def form_valid(self, form):
-        try:
-            response = super().form_valid(form)
-            messages.success(self.request, "Department updated successfully.")
-            return response
-        except Exception as e:
-            messages.error(self.request, f"Error updating department: {str(e)}")
-            return super().form_invalid(form)
+#     def form_valid(self, form):
+#         try:
+#             response = super().form_valid(form)
+#             messages.success(self.request, "Department created successfully.")
+#             return response
+#         except Exception as e:
+#             messages.error(self.request, f"Error creating department: {str(e)}")
+#             return super().form_invalid(form)
 
 
-class DepartmentDeleteView(LoginRequiredMixin, DeleteView):
-    model = Department
-    template_name = "school/department/confirm_delete.html"
-    success_url = reverse_lazy("department-list")
+# class DepartmentUpdateView(LoginRequiredMixin, UpdateView):
+#     model = Department
+#     form_class = DepartmentForm
+#     template_name = "school/department/form.html"
+#     success_url = reverse_lazy("department-list")
 
-    def delete(self, request, *args, **kwargs):
-        try:
-            response = super().delete(request, *args, **kwargs)
-            messages.success(request, "Department deleted successfully.")
-            return response
-        except Exception as e:
-            messages.error(request, f"Error deleting department: {str(e)}")
-            return redirect("department-list")
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context["title"] = "Update Department"
+#         context["button_text"] = "Update"
+#         return context
+
+#     def form_valid(self, form):
+#         try:
+#             response = super().form_valid(form)
+#             messages.success(self.request, "Department updated successfully.")
+#             return response
+#         except Exception as e:
+#             messages.error(self.request, f"Error updating department: {str(e)}")
+#             return super().form_invalid(form)
+
+
+# class DepartmentDeleteView(LoginRequiredMixin, DeleteView):
+#     model = Department
+#     template_name = "school/department/confirm_delete.html"
+#     success_url = reverse_lazy("department-list")
+
+#     def delete(self, request, *args, **kwargs):
+#         try:
+#             response = super().delete(request, *args, **kwargs)
+#             messages.success(request, "Department deleted successfully.")
+#             return response
+#         except Exception as e:
+#             messages.error(request, f"Error deleting department: {str(e)}")
+#             return redirect("department-list")
 
 
 # Admin Views
@@ -150,7 +145,7 @@ class AdminCreateView(LoginRequiredMixin, CreateView):
 
     def form_invalid(self, form):
         messages.error(self.request, "Error creating administrator:")
-        return redirect("admin_dashboard")
+        return redirect("admin_list")
 
 
 class AdminUpdateView(LoginRequiredMixin, UpdateView):
@@ -166,13 +161,13 @@ class AdminUpdateView(LoginRequiredMixin, UpdateView):
         return context
 
     def form_valid(self, form):
-        try:
-            response = super().form_valid(form)
-            messages.success(self.request, "Administrator updated successfully.")
-            return response
-        except Exception as e:
-            messages.error(self.request, f"Error updating administrator: {str(e)}")
-            return super().form_invalid(form)
+        response = super().form_valid(form)
+        messages.success(self.request, "Administrator updated successfully.")
+        return response
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Error creating administrator:")
+        return redirect("admin_list")
 
 
 class AdminDeleteView(LoginRequiredMixin, DeleteView):
@@ -227,17 +222,12 @@ class StaffCreateView(LoginRequiredMixin, CreateView):
         return context
 
     def form_valid(self, form):
-        try:
-            response = super().form_valid(form)
-            messages.success(self.request, "Staff member created successfully.")
-            return response
-        except Exception as e:
-            messages.error(self.request, f"Error creating staff member: {str(e)}")
-            return super().form_invalid(form)
+        response = super().form_valid(form)
+        messages.success(self.request, "Staff member created successfully.")
+        return response
 
     def form_invalid(self, form):
-        print(form.errors, "invalid")
-        return redirect("admin_dashboard")
+        return redirect("staff_list")
 
 
 class StaffUpdateView(LoginRequiredMixin, UpdateView):
@@ -252,13 +242,12 @@ class StaffUpdateView(LoginRequiredMixin, UpdateView):
         return context
 
     def form_valid(self, form):
-        try:
-            response = super().form_valid(form)
-            messages.success(self.request, "Staff member updated successfully.")
-            return response
-        except Exception as e:
-            messages.error(self.request, f"Error updating staff member: {str(e)}")
-            return super().form_invalid(form)
+        response = super().form_valid(form)
+        messages.success(self.request, "Staff member updated successfully.")
+        return response
+
+    def form_invalid(self, form):
+        return redirect("staff_list")
 
 
 class StaffDeleteView(LoginRequiredMixin, DeleteView):
@@ -314,13 +303,12 @@ class LibrarianCreateView(LoginRequiredMixin, CreateView):
         return context
 
     def form_valid(self, form):
-        try:
-            response = super().form_valid(form)
-            messages.success(self.request, "Librarian created successfully.")
-            return response
-        except Exception as e:
-            messages.error(self.request, f"Error creating librarian: {str(e)}")
-            return super().form_invalid(form)
+        response = super().form_valid(form)
+        messages.success(self.request, "Librarian created successfully.")
+        return response
+
+    def form_invalid(self, form):
+        return redirect("librarian_list")
 
 
 class LibrarianUpdateView(LoginRequiredMixin, UpdateView):
@@ -335,13 +323,12 @@ class LibrarianUpdateView(LoginRequiredMixin, UpdateView):
         return context
 
     def form_valid(self, form):
-        try:
-            response = super().form_valid(form)
-            messages.success(self.request, "Librarian updated successfully.")
-            return response
-        except Exception as e:
-            messages.error(self.request, f"Error updating librarian: {str(e)}")
-            return super().form_invalid(form)
+        response = super().form_valid(form)
+        messages.success(self.request, "Librarian updated successfully.")
+        return response
+
+    def form_invalid(self, form):
+        return redirect("librarian_list")
 
 
 class LibrarianDeleteView(LoginRequiredMixin, DeleteView):

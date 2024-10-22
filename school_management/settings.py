@@ -31,8 +31,9 @@ INSTALLED_APPS = [
 EXTERNAL_APPS = [
     "administration.apps.AdministrationConfig",
     "staff.apps.StaffConfig",
-    "librarian.apps.LibrarianConfig",
+    "library.apps.LibraryConfig",
     "accounts.apps.AccountsConfig",
+    "management.apps.ManagementConfig",
 ]
 
 INSTALLED_APPS += EXTERNAL_APPS
