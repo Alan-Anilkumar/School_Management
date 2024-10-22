@@ -39,6 +39,9 @@ INSTALLED_APPS += EXTERNAL_APPS
 
 AUTH_USER_MODEL = "accounts.User"
 
+LOGIN_REDIRECT_URL = "user_redirect"
+LOGOUT_REDIRECT_URL = "login"
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",

@@ -1,5 +1,6 @@
 from django import forms
-from .models import Department, Admin, Staff, Librarian
+from accounts.models import Department, Admin, Staff, Librarian
+from django.forms.widgets import DateInput
 
 
 class DepartmentForm(forms.ModelForm):
@@ -83,13 +84,53 @@ class AdminForm(BaseCustomUserForm):
             "qualification",
         ]
         widgets = {
-            "date_of_birth": forms.DateInput(attrs={"type": "date"}),
-            "address": forms.Textarea(attrs={"rows": 3}),
+            "department": forms.Select(attrs={"class": "form-select"}),
+            "gender": forms.Select(attrs={"class": "form-select"}),
+            "date_of_birth": DateInput(attrs={"class": "form-control", "type": "date"}),
+            "profile_photo": forms.ClearableFileInput(attrs={"class": "form-control"}),
+            "qualification": forms.TextInput(attrs={"class": "form-control"}),
+            "username": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Enter your username"}
+            ),
+            "email": forms.EmailInput(
+                attrs={"class": "form-control", "placeholder": "Enter your email"}
+            ),
+            "first_name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Enter your first name"}
+            ),
+            "last_name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Enter your last name"}
+            ),
+            "phone_number": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Enter your phone number",
+                }
+            ),
+            "emergency_contact": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Enter your phone number",
+                }
+            ),
         }
-        help_texts = {
-            "username": "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.",
-            "email": "Required. Enter a valid email address.",
-        }
+
+    address = forms.CharField(
+        required=True,
+        widget=forms.Textarea(
+            attrs={
+                "class": "form-control",
+                "rows": 2,
+                "placeholder": "Enter your address",
+            }
+        ),
+    )
+
+    def clean_profile_picture(self):
+        profile_picture = self.cleaned_data.get("profile_picture")
+        if profile_picture:
+            return profile_picture
+        return self.instance.profile_picture
 
 
 class StaffForm(BaseCustomUserForm):
@@ -107,17 +148,50 @@ class StaffForm(BaseCustomUserForm):
             "profile_photo",
             "emergency_contact",
             "department",
-            "designation",
             "qualification",
         ]
         widgets = {
-            "date_of_birth": forms.DateInput(attrs={"type": "date"}),
-            "address": forms.Textarea(attrs={"rows": 3}),
+            "department": forms.Select(attrs={"class": "form-select"}),
+            "gender": forms.Select(attrs={"class": "form-select"}),
+            "date_of_birth": DateInput(attrs={"class": "form-control", "type": "date"}),
+            "profile_photo": forms.ClearableFileInput(attrs={"class": "form-control"}),
+            "qualification": forms.TextInput(attrs={"class": "form-control"}),
+            "username": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Enter your username"}
+            ),
+            "email": forms.EmailInput(
+                attrs={"class": "form-control", "placeholder": "Enter your email"}
+            ),
+            "first_name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Enter your first name"}
+            ),
+            "last_name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Enter your last name"}
+            ),
+            "phone_number": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Enter your phone number",
+                }
+            ),
+            "emergency_contact": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Enter your phone number",
+                }
+            ),
         }
-        help_texts = {
-            "username": "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.",
-            "email": "Required. Enter a valid email address.",
-        }
+
+    address = forms.CharField(
+        required=True,
+        widget=forms.Textarea(
+            attrs={
+                "class": "form-control",
+                "rows": 2,
+                "placeholder": "Enter your address",
+            }
+        ),
+    )
 
 
 class LibrarianForm(BaseCustomUserForm):
@@ -138,11 +212,44 @@ class LibrarianForm(BaseCustomUserForm):
             "joining_date",
         ]
         widgets = {
-            "date_of_birth": forms.DateInput(attrs={"type": "date"}),
-            "joining_date": forms.DateInput(attrs={"type": "date"}),
-            "address": forms.Textarea(attrs={"rows": 3}),
+            "gender": forms.Select(attrs={"class": "form-select"}),
+            "date_of_birth": DateInput(attrs={"class": "form-control", "type": "date"}),
+            "joining_date": DateInput(attrs={"class": "form-control", "type": "date"}),
+            "profile_photo": forms.ClearableFileInput(attrs={"class": "form-control"}),
+            "qualification": forms.TextInput(attrs={"class": "form-control"}),
+            "username": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Enter your username"}
+            ),
+            "email": forms.EmailInput(
+                attrs={"class": "form-control", "placeholder": "Enter your email"}
+            ),
+            "first_name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Enter your first name"}
+            ),
+            "last_name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Enter your last name"}
+            ),
+            "phone_number": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Enter your phone number",
+                }
+            ),
+            "emergency_contact": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Enter your phone number",
+                }
+            ),
         }
-        help_texts = {
-            "username": "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.",
-            "email": "Required. Enter a valid email address.",
-        }
+
+    address = forms.CharField(
+        required=True,
+        widget=forms.Textarea(
+            attrs={
+                "class": "form-control",
+                "rows": 2,
+                "placeholder": "Enter your address",
+            }
+        ),
+    )

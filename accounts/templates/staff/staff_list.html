@@ -1,0 +1,31 @@
+{% extends "authenticated_base.html" %}
+{% block content %}
+    <h1>Staff List</h1>
+    <div class="text-end">
+        <a href="{% url 'staff_create' %}" class="btn btn-success">Add Staff</a>
+    </div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Reg ID</th>
+                <th>Name</th>
+                <th>Department</th>
+                <th>Phone Number</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for staff in staffs %}
+                <tr>
+                    <td>{{ staff.registration_id }}</td>
+                    <td>{{ staff.username }}</td>
+                    <td>{{ staff.department }}</td>
+                    <td>{{ staff.phone_number }}</td>
+                    <td>
+                        <a href="{% url 'staff_detail' staff.pk %}" class="btn btn-info"><i class="bi bi-eye"></i></a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
