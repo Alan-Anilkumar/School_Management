@@ -1,0 +1,36 @@
+{% extends "authenticated_base.html" %}
+{% block content %}
+<table class="paleBlueRows">
+    <thead>
+        <tr>
+            <th>Student</th>
+            <th>Book</th>
+            <th>Borrowed Date</th>
+            <th>Due Date</th>
+            <th>Status</th>
+            <th>Remarks</th>
+        </tr>
+    </thead>
+    <tfoot>
+        <tr>
+            <td colspan="6">Library Records</td>
+        </tr>
+    </tfoot>
+    <tbody>
+        {% for record in records %}
+        <tr>
+            <td>{{ record.student }}</td>
+            <td>{{ record.book }}</td>
+            <td>{{ record.borrowed_date }}</td>
+            <td>{{ record.due_date }}</td>
+            <td>{{ record.status }}</td>
+            <td>{{ record.remarks }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6">No records found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock content %}
