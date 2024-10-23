@@ -57,7 +57,6 @@
             </tr>
         </tfoot>
     </table>
-
     <!-- Add Modal -->
     <div class="modal fade" id="addModal" tabindex="-1">
         <div class="modal-dialog">
@@ -68,9 +67,7 @@
                 </div>
                 <form method="POST" action="{% url 'record_create' %}">
                     {% csrf_token %}
-                    <div class="modal-body">
-                        {{ form.as_p }}
-                    </div>
+                    <div class="modal-body">{{ form.as_p }}</div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary">Add</button>
@@ -79,7 +76,6 @@
             </div>
         </div>
     </div>
-
     <!-- Edit Modals -->
     {% for record in records %}
         <div class="modal fade" id="editModal{{ record.id }}" tabindex="-1">
@@ -94,24 +90,55 @@
                         <div class="modal-body">
                             <input type="hidden" name="id" value="{{ record.id }}">
                             <div class="mb-3">
+                                <label for="grade" class="form-label">Grade</label>
+                                <select class="form-control" id="grade" name="grade">
+                                    {% for grade in grades %}
+                                        <option value="{{ grade.id }}" {% if grade.id == record.grade.id %}selected{% endif %}>
+                                            {{ grade.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                {{ form.grade.errors }}
+                            </div>
+                            <div class="mb-3">
                                 <label for="student{{ record.id }}" class="form-label">Student</label>
-                                <input type="text" class="form-control" id="student{{ record.id }}" name="student" value="{{ record.student }}">
+                                <input type="text"
+                                       class="form-control"
+                                       id="student{{ record.id }}"
+                                       name="student"
+                                       value="{{ record.student }}">
                             </div>
                             <div class="mb-3">
                                 <label for="book{{ record.id }}" class="form-label">Book</label>
-                                <input type="text" class="form-control" id="book{{ record.id }}" name="book" value="{{ record.book }}">
+                                <input type="text"
+                                       class="form-control"
+                                       id="book{{ record.id }}"
+                                       name="book"
+                                       value="{{ record.book }}">
                             </div>
                             <div class="mb-3">
                                 <label for="borrowed_date{{ record.id }}" class="form-label">Borrowed Date</label>
-                                <input type="date" class="form-control" id="borrowed_date{{ record.id }}" name="borrowed_date" value="{{ record.borrowed_date|date:'Y-m-d' }}">
+                                <input type="date"
+                                       class="form-control"
+                                       id="borrowed_date{{ record.id }}"
+                                       name="borrowed_date"
+                                       value="{{ record.borrowed_date|date:'Y-m-d' }}">
                             </div>
                             <div class="mb-3">
                                 <label for="due_date{{ record.id }}" class="form-label">Due Date</label>
-                                <input type="date" class="form-control" id="due_date{{ record.id }}" name="due_date" value="{{ record.due_date|date:'Y-m-d' }}">
+                                <input type="date"
+                                       class="form-control"
+                                       id="due_date{{ record.id }}"
+                                       name="due_date"
+                                       value="{{ record.due_date|date:'Y-m-d' }}">
                             </div>
                             <div class="mb-3">
                                 <label for="status{{ record.id }}" class="form-label">Status</label>
-                                <input type="text" class="form-control" id="status{{ record.id }}" name="status" value="{{ record.status }}">
+                                <input type="text"
+                                       class="form-control"
+                                       id="status{{ record.id }}"
+                                       name="status"
+                                       value="{{ record.status }}">
                             </div>
                             <div class="mb-3">
                                 <label for="remarks{{ record.id }}" class="form-label">Remarks</label>
@@ -126,7 +153,6 @@
                 </div>
             </div>
         </div>
-
         <!-- Delete Modals -->
         <div class="modal fade" id="deleteModal{{ record.id }}" tabindex="-1">
             <div class="modal-dialog">

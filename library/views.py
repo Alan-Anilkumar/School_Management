@@ -7,6 +7,8 @@ from django.views.generic import (
     DeleteView,
     DetailView,
 )
+
+from management.models import Grade
 from .models import LibraryRecord, Book
 from .forms import LibraryRecordForm, BookForm
 from django.contrib import messages
@@ -49,6 +51,12 @@ class LibraryRecordUpdateView(UpdateView):
     form_class = LibraryRecordForm
     success_url = reverse_lazy("record_list")
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["grades"] = Grade.objects.all()
+        print("Available grades:", context["grades"])  # Debug statement
+        return context
+
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         if self.object:
@@ -61,8 +69,9 @@ class LibraryRecordUpdateView(UpdateView):
         return response
 
     def form_invalid(self, form):
+        print(form.errors)
         messages.error(self.request, "Error updating record.")
-        return self.render_to_response(self.get_context_data(form=form))
+        return redirect("record_list")
 
 
 class LibraryRecordDeleteView(DeleteView):
