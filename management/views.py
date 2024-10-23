@@ -71,13 +71,19 @@ class GradeDeleteView(LoginRequiredMixin, DeleteView):
 class DepartmentListView(LoginRequiredMixin, ListView):
     model = Department
     template_name = "management/department_list.html"
-    context_object_name = "grades"
+    context_object_name = "departments"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["form"] = DepartmentForm()
+        return context
 
 
 class DepartmentCreateView(LoginRequiredMixin, CreateView):
     model = Department
     form_class = DepartmentForm
-    success_url = reverse_lazy("Department_list")
+    success_url = reverse_lazy("department_list")
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -85,14 +91,15 @@ class DepartmentCreateView(LoginRequiredMixin, CreateView):
         return response
 
     def form_invalid(self, form):
+        print(form.errors)
         messages.error(self.request, "Error creating record.")
-        return redirect("grade_list")
+        return redirect("department_list")
 
 
 class DepartmentUpdateView(LoginRequiredMixin, UpdateView):
     model = Department
     form_class = DepartmentForm
-    success_url = reverse_lazy("Department_list")
+    success_url = reverse_lazy("department_list")
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -101,12 +108,12 @@ class DepartmentUpdateView(LoginRequiredMixin, UpdateView):
 
     def form_invalid(self, form):
         messages.error(self.request, "Error creating record.")
-        return redirect("grade_list")
+        return redirect("department_list")
 
 
 class DepartmentDeleteView(LoginRequiredMixin, DeleteView):
-    model = Grade
-    success_url = reverse_lazy("Department_list")
+    model = Department
+    success_url = reverse_lazy("department_list")
 
     def get(self, request, *args, **kwargs):
         return self.delete(request, *args, **kwargs)

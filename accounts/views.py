@@ -118,6 +118,8 @@ class AdminDetailView(LoginRequiredMixin, DetailView):
     model = Admin
     template_name = "accounts/admin_detail.html"
     context_object_name = "admins"
+    user = Admin.objects.get(username='Admin')
+    print(user.profile_picture)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
