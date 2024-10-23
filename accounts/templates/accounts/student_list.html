@@ -1,0 +1,33 @@
+{% extends "authenticated_base.html" %}
+{% block content %}
+    <h1>Student List</h1>
+    <div class="text-end">
+        <a href="{% url 'student_create' %}" class="btn btn-success">Add Student</a>
+    </div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Reg ID</th>
+                <th>Name</th>
+                <th>Grade</th>
+                <th>Parent Name</th>
+                <th>Parent Phone Number</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+                <tr>
+                    <td>{{ student.registration_id }}</td>
+                    <td>{{ student.get_full_name }}</td>
+                    <td>{{ student.grade }}</td>
+                    <td>{{ student.parent_name }}</td>
+                    <td>{{ student.parent_contact_number }}</td>
+                    <td>
+                        <a href="{% url 'student_detail' student.pk %}" class="btn btn-info"><i class="bi bi-eye"></i></a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock content %}

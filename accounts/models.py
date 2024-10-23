@@ -97,7 +97,7 @@ class Student(User):
 
     def save(self, *args, **kwargs):
         if not self.registration_id:
-            self.registration_id = self.generate_registration_id(prefix="LIB")
+            self.registration_id = self.generate_registration_id(prefix="STU")
         super().save(*args, **kwargs)
 
     def __str__(self):

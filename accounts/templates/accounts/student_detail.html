@@ -1,0 +1,93 @@
+{% extends "authenticated_base.html" %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="card shadow-lg">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h2>{{ students.get_full_name }}'s Profile</h2>
+                <a href="{% url 'student_list' %}" class="btn btn-light">Back to Student List</a>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 text-center">
+                        {% if students.profile_picture %}
+                            <img src="{{ students.profile_picture.url }}"
+                                 alt="Profile Photo"
+                                 class="img-fluid rounded-circle mb-3"
+                                 style="width: 150px; height: 150px; object-fit: cover;">
+                        {% else %}
+                            no img
+                        {% endif %}
+                    </div>
+                    <div class="col-md-8">
+                        <table class="table table-hover">
+                            <tr>
+                                <th>First Name</th>
+                                <td>{{ students.first_name }}</td>
+                            </tr>
+                            <tr>
+                                <th>Last Name</th>
+                                <td>{{ students.last_name }}</td>
+                            </tr>
+                            <tr>
+                                <th>Registration ID</th>
+                                <td>{{ students.registration_id }}</td>
+                            </tr>
+                            <tr>
+                                <th>Phone Name</th>
+                                <td>{{ students.parent_name }}</td>
+                            </tr>
+                            <tr>
+                                <th>Parent Number</th>
+                                <td>{{ students.parent_contact_number }}</td>
+                            </tr>
+                            <tr>
+                                <th>Gender</th>
+                                <td>{{ students.get_gender_display }}</td>
+                            </tr>
+                            <tr>
+                                <th>Date of Birth</th>
+                                <td>{{ students.date_of_birth }}</td>
+                            </tr>
+                            <tr>
+                                <th>Address</th>
+                                <td>{{ students.address }}</td>
+                            </tr>
+                        </table>
+                        <div class="d-flex justify-content-end mt-4">
+                            <a href="{% url 'student_update' students.pk %}" class="btn btn-primary me-2">Update</a>
+                            <button class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade"
+         id="deleteModal"
+         tabindex="-1"
+         role="dialog"
+         aria-labelledby="deleteModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Delete {{ students.first_name }} {{ students.last_name }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">Are you sure you want to delete {{ students.first_name }} {{ students.last_name }}?</div>
+                <div class="modal-footer">
+                    <form method="post" action="{% url 'student_delete' students.pk %}">
+                        {% csrf_token %}
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger">Confirm Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

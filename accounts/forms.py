@@ -2,7 +2,6 @@ from django import forms
 from accounts.models import Admin, Staff, Librarian, Student
 from django.forms.widgets import DateInput
 from management.models import Department, FeeRecord
-from library.models import LibraryRecord
 
 
 class DepartmentForm(forms.ModelForm):
@@ -270,10 +269,13 @@ class StudentForm(forms.ModelForm):
             "first_name",
             "last_name",
             "grade",
+            "gender",
             "admission_date",
             "parent_name",
             "parent_contact_number",
+            "profile_picture",
             "address",
+            "date_of_birth",
         ]
         widgets = {
             "first_name": forms.TextInput(
@@ -286,6 +288,8 @@ class StudentForm(forms.ModelForm):
                 attrs={"class": "form-control", "type": "date"}
             ),
             "grade": forms.Select(attrs={"class": "form-select"}),
+            "gender": forms.Select(attrs={"class": "form-select"}),
+            "date_of_birth": DateInput(attrs={"class": "form-control", "type": "date"}),
             "parent_name": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "Enter your last name"}
             ),
@@ -294,6 +298,9 @@ class StudentForm(forms.ModelForm):
                     "class": "form-control",
                     "placeholder": "Enter your phone number",
                 }
+            ),
+            "profile_picture": forms.ClearableFileInput(
+                attrs={"class": "form-control"}
             ),
         }
 
@@ -308,34 +315,11 @@ class StudentForm(forms.ModelForm):
         ),
     )
 
-
-class LibraryRecordForm(forms.ModelForm):
-    class Meta:
-        model = LibraryRecord
-        fields = ["grade", "student", "book", "borrowed_date", "due_date", "remarks"]
-        widgets = {
-            "borrowed_date": forms.DateInput(attrs={"type": "date"}),
-            "due_date": forms.DateInput(attrs={"type": "date"}),
-        }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Initially disable student dropdown until grade is selected
-        self.fields["student"].queryset = Student.objects.none()
-
-        # If form is being edited and already has grade selected
-        if "grade" in self.data:
-            try:
-                grade_id = int(self.data.get("grade"))
-                self.fields["student"].queryset = Student.objects.filter(
-                    grade_id=grade_id
-                )
-            except (ValueError, TypeError):
-                pass
-        elif self.instance.pk:
-            self.fields["student"].queryset = Student.objects.filter(
-                grade=self.instance.grade
-            )
+    def clean_profile_picture(self):
+        profile_picture = self.cleaned_data.get("profile_picture")
+        if profile_picture:
+            return profile_picture
+        return self.instance.profile_picture
 
 
 class FeeRecordForm(forms.ModelForm):
