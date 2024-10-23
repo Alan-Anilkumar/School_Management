@@ -17,7 +17,7 @@ class GradeForm(forms.ModelForm):
         model = Grade
         fields = ["standard", "section", "in_charge"]
         widgets = {
-            "in_chrage": forms.Select(attrs={"class": "form-select"}),
+            "in_charge": forms.Select(attrs={"class": "form-select"}),
         }
 
 

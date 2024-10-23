@@ -19,4 +19,5 @@ urlpatterns = [
         name="login",
     ),
     path("library/", include("library.urls")),
+    path("management/", include("management.urls")),
 ]

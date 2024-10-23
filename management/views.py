@@ -8,19 +8,25 @@ from django.views.generic import (
     CreateView,
     UpdateView,
     DeleteView,
-    DetailView,
 )
 from .models import Grade, FeeRecord, Department
 from .forms import GradeForm
+from accounts.models import Staff
 
-
-class GradeListView(ListView):
+class GradeListView(LoginRequiredMixin, ListView):
     model = Grade
     template_name = "management/grade_list.html"
     context_object_name = "grades"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
-class GradeCreateView(CreateView):
+        context["form"] = GradeForm()
+        context['staff_list'] = Staff.objects.all()
+        return context
+
+
+class GradeCreateView(LoginRequiredMixin, CreateView):
     model = Grade
     form_class = GradeForm
     success_url = reverse_lazy("grade_list")
@@ -32,10 +38,10 @@ class GradeCreateView(CreateView):
 
     def form_invalid(self, form):
         messages.error(self.request, "Error creating record.")
-        return redirect("record_list")
+        return redirect("grade_list")
 
 
-class GradeUpdateView(UpdateView):
+class GradeUpdateView(LoginRequiredMixin, UpdateView):
     model = Grade
     form_class = GradeForm
     success_url = reverse_lazy("grade_list")
@@ -47,10 +53,10 @@ class GradeUpdateView(UpdateView):
 
     def form_invalid(self, form):
         messages.error(self.request, "Error creating record.")
-        return redirect("record_list")
+        return redirect("grade_list")
 
 
-class GradeDeleteView(DeleteView):
+class GradeDeleteView(LoginRequiredMixin, DeleteView):
     model = Grade
     success_url = reverse_lazy("grade_list")
 
