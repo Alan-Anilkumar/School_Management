@@ -14,27 +14,19 @@ class LibraryRecordForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Initially disable the student field until grade is selected
-        self.fields["student"].queryset = Student.objects.none()
-        self.fields["student"].widget.attrs.update(
-            {"disabled": "true"}
-        )  # Disable student field initially
 
-        # If grade is selected via POST request or editing a record
         if "grade" in self.data:
             grade_id = int(self.data.get("grade"))
-            self.fields["student"].queryset = Student.objects.filter(grade_id=grade_id)
-            self.fields["student"].widget.attrs.pop(
-                "disabled", None
-            )  # Enable student field if grade is selected
+            self.fields["student"].queryset = Student.objects.filter(
+                grade_id=grade_id
+            )
         elif self.instance.pk:
-            # When editing an existing record, set the student queryset to the current grade
             self.fields["student"].queryset = Student.objects.filter(
                 grade=self.instance.grade
             )
-            self.fields["student"].widget.attrs.pop(
-                "disabled", None
-            )  # Enable field when editing
+        else:
+            # Show all students if no grade is selected
+            self.fields["student"].queryset = Student.objects.all()
 
     def clean(self):
         cleaned_data = super().clean()

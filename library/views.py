@@ -12,56 +12,67 @@ from .forms import LibraryRecordForm, BookForm
 from django.contrib import messages
 
 
-# List all library records
 class LibraryRecordListView(ListView):
     model = LibraryRecord
     template_name = "library/record_list.html"
     context_object_name = "records"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
-# Create a new library record
+        context["form"] = LibraryRecordForm()
+        context["edit_forms"] = {
+            record.id: LibraryRecordForm(instance=record)
+            for record in context["records"]
+        }
+
+        return context
+
+
 class LibraryRecordCreateView(CreateView):
     model = LibraryRecord
     form_class = LibraryRecordForm
-    template_name = "library/add_update_record.html"
     success_url = reverse_lazy("record_list")
 
-    def form_valid(self):
-        messages.success(self.request, "Book successfully created.")
-        return redirect("record_list")
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, "Record created successfully.")
+        return response
 
     def form_invalid(self, form):
-        messages.error(
-            self.request,
-            "There was an error creating the book. Please check the details.",
-        )
-        return super().form_invalid(form)
+        messages.error(self.request, "Error creating record.")
+        return redirect("record_list")
 
 
-# Update an existing library record
 class LibraryRecordUpdateView(UpdateView):
     model = LibraryRecord
     form_class = LibraryRecordForm
-    template_name = "library/add_update_record.html"
     success_url = reverse_lazy("record_list")
 
-    def form_valid(self):
-        messages.success(self.request, "Book successfully created.")
-        return redirect("record_list")
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        if self.object:
+            kwargs["instance"] = self.object
+        return kwargs
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, "Record updated successfully.")
+        return response
 
     def form_invalid(self, form):
-        messages.error(
-            self.request,
-            "There was an error creating the book. Please check the details.",
-        )
-        return super().form_invalid(form)
+        messages.error(self.request, "Error updating record.")
+        return self.render_to_response(self.get_context_data(form=form))
 
 
-# Delete a library record
 class LibraryRecordDeleteView(DeleteView):
     model = LibraryRecord
-    template_name = "library/add_update_record.html"
-    success_url = reverse_lazy("add_update_record")
+    success_url = reverse_lazy("record_list")
+
+    def delete(self, request, *args, **kwargs):
+        response = super().delete(request, *args, **kwargs)
+        messages.success(self.request, "Record deleted successfully.")
+        return response
 
 
 # View details of a specific library record

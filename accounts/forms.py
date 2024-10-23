@@ -1,16 +1,6 @@
 from django import forms
 from accounts.models import Admin, Staff, Librarian, Student
 from django.forms.widgets import DateInput
-from management.models import Department, FeeRecord
-
-
-class DepartmentForm(forms.ModelForm):
-    class Meta:
-        model = Department
-        fields = ["name", "description"]
-        widgets = {
-            "description": forms.Textarea(attrs={"rows": 3}),
-        }
 
 
 class BaseCustomUserForm(forms.ModelForm):
@@ -320,27 +310,3 @@ class StudentForm(forms.ModelForm):
         if profile_picture:
             return profile_picture
         return self.instance.profile_picture
-
-
-class FeeRecordForm(forms.ModelForm):
-    class Meta:
-        model = FeeRecord
-        fields = ["grade", "student", "amount", "due_date", "remarks"]
-        widgets = {"due_date": forms.DateInput(attrs={"type": "date"})}
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["student"].queryset = Student.objects.none()
-
-        if "grade" in self.data:
-            try:
-                grade_id = int(self.data.get("grade"))
-                self.fields["student"].queryset = Student.objects.filter(
-                    grade_id=grade_id
-                )
-            except (ValueError, TypeError):
-                pass
-        elif self.instance.pk:
-            self.fields["student"].queryset = Student.objects.filter(
-                grade=self.instance.grade
-            )
