@@ -1,22 +1,9 @@
 from django import forms
-from accounts.models import Department, Admin, Staff, Librarian
+from accounts.models import Admin, Staff, Librarian, Student
 from django.forms.widgets import DateInput
 
 
-class DepartmentForm(forms.ModelForm):
-    class Meta:
-        model = Department
-        fields = ["name", "description"]
-        widgets = {
-            "description": forms.Textarea(attrs={"rows": 3}),
-        }
-
-
 class BaseCustomUserForm(forms.ModelForm):
-    """
-    Base form incorporating features from both UserCreationForm and UserChangeForm
-    """
-
     password1 = forms.CharField(
         label="Password",
         widget=forms.PasswordInput,
@@ -32,7 +19,7 @@ class BaseCustomUserForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if not self.instance.pk:  # New user
+        if not self.instance.pk:
             self.fields["password1"].required = True
             self.fields["password2"].required = True
             self.fields["password1"].help_text = "Required. Enter a strong password."
@@ -47,7 +34,7 @@ class BaseCustomUserForm(forms.ModelForm):
         password1 = cleaned_data.get("password1")
         password2 = cleaned_data.get("password2")
 
-        if password1 or password2:  # If either password field is filled
+        if password1 or password2:
             if password1 != password2:
                 raise forms.ValidationError("Passwords don't match")
             if len(password1) < 8:
@@ -78,7 +65,7 @@ class AdminForm(BaseCustomUserForm):
             "address",
             "date_of_birth",
             "gender",
-            "profile_photo",
+            "profile_picture",
             "emergency_contact",
             "department",
             "qualification",
@@ -87,7 +74,9 @@ class AdminForm(BaseCustomUserForm):
             "department": forms.Select(attrs={"class": "form-select"}),
             "gender": forms.Select(attrs={"class": "form-select"}),
             "date_of_birth": DateInput(attrs={"class": "form-control", "type": "date"}),
-            "profile_photo": forms.ClearableFileInput(attrs={"class": "form-control"}),
+            "profile_picture": forms.ClearableFileInput(
+                attrs={"class": "form-control"}
+            ),
             "qualification": forms.TextInput(attrs={"class": "form-control"}),
             "username": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "Enter your username"}
@@ -145,7 +134,7 @@ class StaffForm(BaseCustomUserForm):
             "address",
             "date_of_birth",
             "gender",
-            "profile_photo",
+            "profile_picture",
             "emergency_contact",
             "department",
             "qualification",
@@ -154,7 +143,9 @@ class StaffForm(BaseCustomUserForm):
             "department": forms.Select(attrs={"class": "form-select"}),
             "gender": forms.Select(attrs={"class": "form-select"}),
             "date_of_birth": DateInput(attrs={"class": "form-control", "type": "date"}),
-            "profile_photo": forms.ClearableFileInput(attrs={"class": "form-control"}),
+            "profile_picture": forms.ClearableFileInput(
+                attrs={"class": "form-control"}
+            ),
             "qualification": forms.TextInput(attrs={"class": "form-control"}),
             "username": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "Enter your username"}
@@ -206,7 +197,7 @@ class LibrarianForm(BaseCustomUserForm):
             "address",
             "date_of_birth",
             "gender",
-            "profile_photo",
+            "profile_picture",
             "emergency_contact",
             "qualification",
             "joining_date",
@@ -215,7 +206,9 @@ class LibrarianForm(BaseCustomUserForm):
             "gender": forms.Select(attrs={"class": "form-select"}),
             "date_of_birth": DateInput(attrs={"class": "form-control", "type": "date"}),
             "joining_date": DateInput(attrs={"class": "form-control", "type": "date"}),
-            "profile_photo": forms.ClearableFileInput(attrs={"class": "form-control"}),
+            "profile_picture": forms.ClearableFileInput(
+                attrs={"class": "form-control"}
+            ),
             "qualification": forms.TextInput(attrs={"class": "form-control"}),
             "username": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "Enter your username"}
@@ -253,3 +246,63 @@ class LibrarianForm(BaseCustomUserForm):
             }
         ),
     )
+
+
+class StudentForm(forms.ModelForm):
+    class Meta:
+        model = Student
+        fields = [
+            "first_name",
+            "last_name",
+            "grade",
+            "gender",
+            "admission_date",
+            "parent_name",
+            "parent_contact_number",
+            "profile_picture",
+            "address",
+            "date_of_birth",
+        ]
+        widgets = {
+            "first_name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Enter your first name"}
+            ),
+            "last_name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Enter your last name"}
+            ),
+            "admission_date": DateInput(
+                attrs={"class": "form-control", "type": "date"}
+            ),
+            "grade": forms.Select(attrs={"class": "form-select"}),
+            "gender": forms.Select(attrs={"class": "form-select"}),
+            "date_of_birth": DateInput(attrs={"class": "form-control", "type": "date"}),
+            "parent_name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Enter your last name"}
+            ),
+            "parent_contact_number": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Enter your phone number",
+                }
+            ),
+            "profile_picture": forms.ClearableFileInput(
+                attrs={"class": "form-control"}
+            ),
+        }
+
+    address = forms.CharField(
+        required=True,
+        widget=forms.Textarea(
+            attrs={
+                "class": "form-control",
+                "rows": 2,
+                "placeholder": "Enter your address",
+            }
+        ),
+    )
+
+    def clean_profile_picture(self):
+        profile_picture = self.cleaned_data.get("profile_picture")
+        if profile_picture:
+            return profile_picture
+        return self.instance.profile_picture

@@ -1,0 +1,70 @@
+{% extends "authenticated_base.html" %}
+{% block content %}
+    <h1>Student List</h1>
+    <!-- Add Grade Filter -->
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <form method="get" id="gradeFilterForm" class="form-inline">
+                <div class="input-group">
+                    <select name="grade" class="form-control" onchange="this.form.submit()">
+                        <option value="">All Grades</option>
+                        {% for grade in grades %}
+                            <option value="{{ grade.id }}"
+                                    {% if selected_grade == grade.id|stringformat:"i" %}selected{% endif %}>
+                                {{ grade.standard }}- {{ grade.section }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-8 text-end">
+            <a href="{% url 'student_create' %}" class="btn btn-primary">Add Student</a>
+        </div>
+    </div>
+    <table class="paleBlueRows">
+        <thead>
+            <tr>
+                <th>Reg ID</th>
+                <th>Name</th>
+                <th>Grade</th>
+                <th>Parent Name</th>
+                <th>Parent Phone Number</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+                <tr>
+                    <td>{{ student.registration_id }}</td>
+                    <td>{{ student.get_full_name }}</td>
+                    <td>{{ student.grade.standard }}</td>
+                    <!-- Changed from grade.name to grade.standard -->
+                    <td>{{ student.parent_name }}</td>
+                    <td>{{ student.parent_contact_number }}</td>
+                    <td>
+                        <a href="{% url 'student_detail' student.pk %}" class="btn btn-info"><i class="bi bi-eye"></i></a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">No students found</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <!-- Add this JavaScript to persist the filter -->
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const gradeParam = urlParams.get('grade');
+    
+    if (gradeParam) {
+        const select = document.querySelector('select[name="grade"]');
+        if (select) {
+            select.value = gradeParam;
+        }
+    }
+});
+    </script>
+{% endblock content %}

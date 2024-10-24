@@ -11,7 +11,6 @@ urlpatterns = [
     path("administration/", include("administration.urls")),
     path("admin/", admin.site.urls),
     path("staff/", include("staff.urls")),
-    path("librarian/", include("librarian.urls")),
     path("accounts/", include("accounts.urls")),
     path("accounts/", include("django.contrib.auth.urls")),
     path(
@@ -19,4 +18,6 @@ urlpatterns = [
         auth_views.LoginView.as_view(template_name="registration/login.html"),
         name="login",
     ),
+    path("library/", include("library.urls")),
+    path("management/", include("management.urls")),
 ]

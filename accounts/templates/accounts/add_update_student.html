@@ -1,0 +1,121 @@
+{% extends "authenticated_base.html" %}
+{% block content %}
+    <div class="container mt-1">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0">
+                    {% if form.instance.pk %}
+                        Update student - {{ form.instance.get_full_name }}
+                    {% else %}
+                        New student
+                    {% endif %}
+                </h4>
+            </div>
+            <div class="card-body">
+                <form id="studentForm" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <h6>First Name:</h6>
+                            {{ form.first_name }}
+                            {{ form.first_name.errors }}
+                        </div>
+                        <div class="col-md-4">
+                            <h6>Last Name:</h6>
+                            {{ form.last_name }}
+                            {{ form.last_name.errors }}
+                        </div>
+                        <div class="col-md-4">
+                            <h6>Grade:</h6>
+                            {{ form.grade }}
+                            {{ form.grade.errors }}
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <h6>Parent Name:</h6>
+                            {{ form.parent_name }}
+                            {{ form.parent_name.errors }}
+                        </div>
+                        <div class="col-md-3">
+                            <h6>Parent Contact:</h6>
+                            {{ form.parent_contact_number }}
+                            {{ form.parent_contact_number.errors }}
+                        </div>
+                        <div class="col-3">
+                            <h6>Gender:</h6>
+                            {{ form.gender }}
+                            {{ form.gender.errors }}
+                        </div>
+                        <div class="col-3">
+                            <h6>Picture:</h6>
+                            {{ form.profile_picture }}
+                            {{ form.profile_picture.errors }}
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6>Address:</h6>
+                            {{ form.address }}
+                            {{ form.address.errors }}
+                        </div>
+                        <div class="col-3">
+                            <h6>Admission Date:</h6>
+                            {{ form.admission_date }}
+                            {{ form.admission_date.errors }}
+                        </div>
+                        <div class="col-3">
+                            <h6>DOB:</h6>
+                            {{ form.date_of_birth }}
+                            {{ form.date_of_birth.errors }}
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        {% if form.instance.pk %}
+                            <a href="{% url 'student_detail' form.instance.pk %}"
+                               class="btn btn-secondary">Cancel</a>
+                        {% else %}
+                            <button type="button" class="btn btn-danger" id="clearButton">Clear</button>
+                        {% endif %}
+                        <button type="submit" id="saveButton" class="btn btn-success">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+{% block scripts %}
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const clearButton = document.getElementById("clearButton");
+        if (clearButton) {
+            clearButton.addEventListener("click", function() {
+                document.getElementById("operatorForm").reset();
+            });
+        }
+
+        // Add form validation highlight
+        const form = document.getElementById("operatorForm");
+        form.addEventListener("submit", function(event) {
+            const inputs = form.querySelectorAll("input, select, textarea");
+            inputs.forEach(input => {
+                if (!input.value && input.hasAttribute("required")) {
+                    input.classList.add("is-invalid");
+                } else {
+                    input.classList.remove("is-invalid");
+                }
+            });
+        });
+
+        // Remove validation highlight on input
+        form.querySelectorAll("input, select, textarea").forEach(input => {
+            input.addEventListener("input", function() {
+                if (this.value) {
+                    this.classList.remove("is-invalid");
+                }
+            });
+        });
+    });
+    </script>
+{% endblock scripts %}

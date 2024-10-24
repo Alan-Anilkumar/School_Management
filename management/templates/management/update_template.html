@@ -1,0 +1,20 @@
+{% extends "authenticated_base.html" %}
+{% block content %}
+        <div class="container mt-2">
+            <div class="container col-8 border rounded-4">
+                <div class="text-center py-2">
+                    <h4>Update {{ item_name }}</h4>
+                </div>
+                <form id="updateForm" method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        {{ form.as_p }}
+                        <div class="d-grid gap-2 d-md-block text-end">
+                            <button type="button" class="btn btn-danger" onclick="goBackAndRefresh()">Cancel</button>
+                            <button type="submit" class="btn btn-primary w-25">Update {{ item_name }}</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+{% endblock content %}
