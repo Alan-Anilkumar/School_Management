@@ -62,6 +62,7 @@ class LibraryRecordCreateView(CreateView, LoginRequiredMixin, PermissionRequired
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["page_title"] = "Add Record"
+        context["add_form"] = self.get_form()
         return context
 
     def form_valid(self, form):
@@ -87,7 +88,7 @@ class LibraryRecordUpdateView(UpdateView, LoginRequiredMixin, PermissionRequired
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["page_title"] = "Update Record"
-        # context["grades"] = Grade.objects.all()
+        context["add_form"] = self.get_form()
         return context
 
     def get_form_kwargs(self):
@@ -155,6 +156,7 @@ class BookListView(ListView, LoginRequiredMixin, PermissionRequiredMixin):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["page_title"] = "Book List"
+        context["add_form"] = self.get_form()
         return context
 
 
@@ -186,6 +188,7 @@ class BookCreateView(CreateView, LoginRequiredMixin, PermissionRequiredMixin):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["page_title"] = "Add Book"
+        context["add_form"] = self.get_form()
         return context
 
     def form_valid(self, form):
@@ -210,6 +213,7 @@ class BookUpdateView(UpdateView, LoginRequiredMixin, PermissionRequiredMixin):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["page_title"] = "Update Book"
+        context["add_form"] = self.get_form()
         return context
 
     def form_valid(self, form):

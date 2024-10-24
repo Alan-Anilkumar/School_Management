@@ -252,6 +252,7 @@ class StudentForm(forms.ModelForm):
     class Meta:
         model = Student
         fields = [
+            "username",
             "first_name",
             "last_name",
             "grade",
@@ -264,6 +265,9 @@ class StudentForm(forms.ModelForm):
             "date_of_birth",
         ]
         widgets = {
+            "username": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Enter your username"}
+            ),
             "first_name": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "Enter your first name"}
             ),

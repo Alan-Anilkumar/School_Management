@@ -358,7 +358,7 @@ class StudentUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["page_title"] = "Update STudent"
+        context["page_title"] = "Update Student"
         return context
 
     def form_valid(self, form):
