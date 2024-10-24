@@ -41,6 +41,7 @@ class GradeCreateView(LoginRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["page_title"] = "Add Grade"
+        context["add_form"] = self.get_form()
         return context
 
     def form_valid(self, form):
@@ -63,6 +64,7 @@ class GradeUpdateView(LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["page_title"] = "Update Grade"
+        context["add_form"] = self.get_form()
         return context
 
     def form_valid(self, form):
@@ -97,7 +99,6 @@ class DepartmentListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["page_title"] = "Department List"
-        context["form"] = DepartmentForm()
         return context
 
 
@@ -111,6 +112,7 @@ class DepartmentCreateView(LoginRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["page_title"] = "Add Department"
+        context["add_form"] = self.get_form()
         return context
 
     def form_valid(self, form):
@@ -134,6 +136,7 @@ class DepartmentUpdateView(LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["page_title"] = "Update Department"
+        context["add_form"] = self.get_form()
         return context
 
     def form_valid(self, form):

@@ -16,17 +16,22 @@
                     {% csrf_token %}
                     {{ form.non_field_errors }}
                     <div class="row mb-3">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
+                            <h6>Username:</h6>
+                            {{ form.username }}
+                            {{ form.username.errors }}
+                        </div>
+                        <div class="col-md-3">
                             <h6>First Name:</h6>
                             {{ form.first_name }}
                             {{ form.first_name.errors }}
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <h6>Last Name:</h6>
                             {{ form.last_name }}
                             {{ form.last_name.errors }}
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <h6>Grade:</h6>
                             {{ form.grade }}
                             {{ form.grade.errors }}
