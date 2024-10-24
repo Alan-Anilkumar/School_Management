@@ -1,3 +1,4 @@
+from datetime import date
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import (
@@ -21,7 +22,7 @@ class LibraryRecordListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
+        context["page_title"] = "Record List"
         context["form"] = LibraryRecordForm()
         context["edit_forms"] = {
             record.id: LibraryRecordForm(instance=record)
@@ -34,7 +35,14 @@ class LibraryRecordListView(ListView):
 class LibraryRecordCreateView(CreateView):
     model = LibraryRecord
     form_class = LibraryRecordForm
+    template_name = "library/add_template.html"
+
     success_url = reverse_lazy("record_list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Add Record"
+        return context
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -49,12 +57,13 @@ class LibraryRecordCreateView(CreateView):
 class LibraryRecordUpdateView(UpdateView):
     model = LibraryRecord
     form_class = LibraryRecordForm
+    template_name = "library/update_template.html"
     success_url = reverse_lazy("record_list")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["grades"] = Grade.objects.all()
-        print("Available grades:", context["grades"])  # Debug statement
+        context["page_title"] = "Update Record"
+        # context["grades"] = Grade.objects.all()
         return context
 
     def get_form_kwargs(self):
@@ -64,6 +73,17 @@ class LibraryRecordUpdateView(UpdateView):
         return kwargs
 
     def form_valid(self, form):
+        return_date = form.cleaned_data.get("return_date")
+        due_date = form.cleaned_data.get("due_date")
+        if return_date:
+            if return_date > due_date:
+                form.instance.status = "OVERDUE"
+            else:
+                form.instance.status = "RETURNED"
+        elif due_date and date.today() > due_date:
+            form.instance.status = "OVERDUE"
+        else:
+            form.instance.status = "BORROWED"
         response = super().form_valid(form)
         messages.success(self.request, "Record updated successfully.")
         return response
@@ -95,56 +115,73 @@ class BookListView(ListView):
     model = Book
     template_name = "library/book_list.html"
     context_object_name = "books"
+    page_title = "Book List"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Book List"
+        return context
 
 
 class BookDetailView(DetailView):
     model = Book
-    template_name = "library/book_detail.html"  # Your detail template
+    template_name = "library/book_detail.html"
     context_object_name = "book"
+    page_title = "Book Detail"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Book Details"
+        return context
 
 
 class BookCreateView(CreateView):
     model = Book
     form_class = BookForm
-    template_name = "library/book_form.html"
+    template_name = "library/add_template.html"
     success_url = reverse_lazy("book_list")
+    page_title = "Add New Book"
 
-    def form_valid(self):
-        messages.success(self.request, "Book successfully created.")
-        return redirect("record_list")
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Add Book"
+        return context
+
+    def form_valid(self, form):
+        messages.success(self.request, "Book added successfully!")
+        return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(
-            self.request,
-            "There was an error creating the book. Please check the details.",
-        )
+        messages.error(self.request, "Please correct the errors below.")
         return super().form_invalid(form)
 
 
-# Update an existing book
 class BookUpdateView(UpdateView):
     model = Book
     form_class = BookForm
-    template_name = "library/book_form.html"
+    template_name = "library/update_template.html"
     success_url = reverse_lazy("book_list")
+    page_title = "Update Book"
 
-    def form_valid(self):
-        messages.success(self.request, "Book successfully updated.")
-        return redirect("record_list")
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Update Book"
+        return context
+
+    def form_valid(self, form):
+        messages.success(self.request, "Book updated successfully!")
+        return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(
-            self.request,
-            "There was an error updating the book. Please check the details.",
-        )
+        messages.error(self.request, "Please correct the errors below.")
         return super().form_invalid(form)
 
 
 class BookDeleteView(DeleteView):
     model = Book
-    template_name = "library/book_confirm_delete.html"  # Your confirmation template
+    template_name = "library/book_confirm_delete.html"
     success_url = reverse_lazy("book_list")
 
-    def delete(self, request, *args, **kwargs):
-        messages.success(self.request, "Book successfully deleted.")
-        return super().delete(request, *args, **kwargs)
+    def form_valid(self, form):
+        messages.success(self.request, "Book deleted successfully!")
+        return super().form_valid(form)

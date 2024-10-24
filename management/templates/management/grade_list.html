@@ -1,9 +1,7 @@
 {% extends "authenticated_base.html" %}
 {% block content %}
     <div class="text-end">
-        <button class="text-end btn btn-primary btn-sm mb-2"
-                data-bs-toggle="modal"
-                data-bs-target="#addModal">Add New Grade</button>
+        <a href="{% url 'grade_create' %}" class="btn btn-primary btn-sm">Add Grade</a>
     </div>
     <table class="paleBlueRows">
         <thead>
@@ -21,14 +19,8 @@
                     <td>{{ grade.section }}</td>
                     <td>{{ grade.in_charge }}</td>
                     <td>
-                        <button class="btn btn-info btn-sm"
-                                data-bs-toggle="modal"
-                                data-bs-target="#editModal{{ grade.id }}"
-                                data-standard="{{ grade.standard }}"
-                                data-section="{{ grade.section }}"
-                                data-in-charge="{{ grade.in_charge.id }}">
-                            <i class="bi bi-arrow-clockwise"></i>
-                        </button>
+                        <a href="{% url 'grade_update' grade.id %}" class="btn btn-info btn-sm"><i class="bi bi-arrow-clockwise"></i></a>
+
                         <button class="btn btn-danger btn-sm"
                                 data-bs-toggle="modal"
                                 data-bs-target="#deleteModal{{ grade.id }}">
@@ -48,67 +40,7 @@
             </tr>
         </tfoot>
     </table>
-
-    <!-- Add Modal -->
-    <div class="modal fade" id="addModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5>Add New Grade</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <form method="POST" action="{% url 'grade_create' %}">
-                    {% csrf_token %}
-                    <div class="modal-body">
-                        {{ form.as_p }}
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Add</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Edit Modals -->
     {% for grade in grades %}
-        <div class="modal fade" id="editModal{{ grade.id }}" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5>Edit Grade</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <form method="post" action="{% url 'grade_update' grade.id %}">
-                        {% csrf_token %}
-                        <div class="modal-body">
-                            <div class="mb-3">
-                                <label for="standard{{ grade.id }}" class="form-label">Standard</label>
-                                <input type="number" class="form-control" id="standard{{ grade.id }}" name="standard" value="{{ grade.standard }}">
-                            </div>
-                            <div class="mb-3">
-                                <label for="section{{ grade.id }}" class="form-label">Section</label>
-                                <input type="text" class="form-control" id="section{{ grade.id }}" name="section" value="{{ grade.section }}">
-                            </div>
-                            <div class="mb-3">
-                                <label for="in_charge{{ grade.id }}" class="form-label">In Charge</label>
-                                <select class="form-select" id="in_charge{{ grade.id }}" name="in_charge">
-                                    {% for staff in staff_list %}
-                                        <option value="{{ staff.id }}" {% if staff.id == grade.in_charge.id %}selected{% endif %}>{{ staff }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Update</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
         <!-- Delete Modals -->
         <div class="modal fade" id="deleteModal{{ grade.id }}" tabindex="-1">
             <div class="modal-dialog">

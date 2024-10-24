@@ -20,4 +20,11 @@ urlpatterns = [
     path(
         "department/delete/<int:pk>/", views.DepartmentDeleteView.as_view(), name="department_delete"
     ),
+    # FeeRecord
+    path('fees/', views.FeeRecordListView.as_view(), name='fee_list'),
+    path('fees/<int:pk>/', views.FeeRecordDetailView.as_view(), name='fee_detail'),
+    path('fees/create/', views.FeeRecordCreateView.as_view(), name='fee_create'),
+    path('fees/update/<int:pk>/', views.FeeRecordUpdateView.as_view(), name='fee_update'),
+    path('fees/delete/<int:pk>/', views.FeeRecordDeleteView.as_view(), name='fee_delete'),
+
 ]

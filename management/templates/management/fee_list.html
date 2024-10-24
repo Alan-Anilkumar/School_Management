@@ -1,0 +1,67 @@
+{% extends 'authenticated_base.html' %}
+{% block content %}
+    <h2>Fee Records</h2>
+    <div class="filters mb-3">
+        <form method="get">
+            <select name="status" onchange="this.form.submit()">
+                <option value="">All Status</option>
+                <option value="PENDING"
+                        {% if request.GET.status == 'PENDING' %}selected{% endif %}>Pending</option>
+                <option value="PAID" {% if request.GET.status == 'PAID' %}selected{% endif %}>Paid</option>
+            </select>
+        </form>
+    </div>
+    <a href="{% url 'fee_create' %}" class="btn btn-primary mb-3">Add New Fee Record</a>
+    <table class="paleBlueRows">
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Grade</th>
+                <th>Amount</th>
+                <th>Due Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in fee_records %}
+                <tr>
+                    <td>{{ record.student }}</td>
+                    <td>{{ record.grade }}</td>
+                    <td>${{ record.amount }}</td>
+                    <td>{{ record.due_date }}</td>
+                    <td>{{ record.status }}</td>
+                    <td>
+                        <a href="{% url 'fee_detail' record.pk %}" class="btn btn-info btn-sm">View</a>
+                        <a href="{% url 'fee_update' record.pk %}"
+                           class="btn btn-warning btn-sm">Edit</a>
+                        <a href="#"
+                           class="btn btn-danger btn-sm"
+                           data-bs-toggle="modal"
+                           data-bs-target="#deleteModal{{ record.pk }}">Delete</a>
+                    </td>
+                </tr>
+                <div class="modal fade" id="deleteModal{{ record.pk }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ record.pk }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteModalLabel{{ record.pk }}">Delete Fee Record</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to delete the fee record for <strong>{{ record.student }}</strong>?
+                            </div>
+                            <div class="modal-footer">
+                                <form action="{% url 'fee_delete' record.pk %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock content %}

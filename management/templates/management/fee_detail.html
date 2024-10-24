@@ -1,0 +1,75 @@
+{% extends 'authenticated_base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Fee Record Details</h2>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Student Information</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <strong>Name:</strong> {{ student.first_name }} {{ student.last_name }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Grade:</strong> {{ student.grade }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Admission Date:</strong> {{ student.admission_date }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Parent Name:</strong> {{ student.parent_name }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Parent Contact Number:</strong> {{ student.parent_contact_number }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Fee Record Information</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <th>Amount</th>
+                                <td>${{ fee_record.amount }}</td>
+                            </tr>
+                            <tr>
+                                <th>Due Date</th>
+                                <td>{{ fee_record.due_date }}</td>
+                            </tr>
+                            <tr>
+                                <th>Payment Date</th>
+                                <td>{{ fee_record.payment_date|default:"Not Paid" }}</td>
+                            </tr>
+                            <tr>
+                                <th>Status</th>
+                                <td>{{ fee_record.get_status_display }}</td>
+                            </tr>
+                            <tr>
+                                <th>Remarks</th>
+                                <td>{{ fee_record.remarks }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="d-flex justify-content-end gap-2">
+        <a href="{% url 'fee_update' fee_record.pk %}" class="btn btn-warning">Edit</a>
+        <a href="{% url 'fee_list' %}" class="btn btn-secondary">Back to List</a>
+    </div>
+</div>
+{% endblock content %}

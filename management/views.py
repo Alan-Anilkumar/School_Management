@@ -7,9 +7,10 @@ from django.views.generic import (
     CreateView,
     UpdateView,
     DeleteView,
+    DetailView,
 )
 from .models import Grade, FeeRecord, Department
-from .forms import GradeForm, DepartmentForm
+from .forms import GradeForm, DepartmentForm, FeeRecordForm
 from accounts.models import Staff
 
 
@@ -20,7 +21,7 @@ class GradeListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
+        context["page_title"] = "Grade List"
         context["form"] = GradeForm()
         context["staff_list"] = Staff.objects.all()
         return context
@@ -29,7 +30,13 @@ class GradeListView(LoginRequiredMixin, ListView):
 class GradeCreateView(LoginRequiredMixin, CreateView):
     model = Grade
     form_class = GradeForm
+    template_name = "management/add_template.html"
     success_url = reverse_lazy("grade_list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Add Grade"
+        return context
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -44,7 +51,13 @@ class GradeCreateView(LoginRequiredMixin, CreateView):
 class GradeUpdateView(LoginRequiredMixin, UpdateView):
     model = Grade
     form_class = GradeForm
+    template_name = "management/update_template.html"
     success_url = reverse_lazy("grade_list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Update Grade"
+        return context
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -75,7 +88,7 @@ class DepartmentListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
+        context["page_title"] = "Department List"
         context["form"] = DepartmentForm()
         return context
 
@@ -83,7 +96,13 @@ class DepartmentListView(LoginRequiredMixin, ListView):
 class DepartmentCreateView(LoginRequiredMixin, CreateView):
     model = Department
     form_class = DepartmentForm
+    template_name = "management/add_template.html"
     success_url = reverse_lazy("department_list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Add Department"
+        return context
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -99,7 +118,13 @@ class DepartmentCreateView(LoginRequiredMixin, CreateView):
 class DepartmentUpdateView(LoginRequiredMixin, UpdateView):
     model = Department
     form_class = DepartmentForm
+    template_name = "management/update_template.html"
     success_url = reverse_lazy("department_list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Update Department"
+        return context
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -120,4 +145,72 @@ class DepartmentDeleteView(LoginRequiredMixin, DeleteView):
 
     def delete(self, request, *args, **kwargs):
         messages.success(request, "Department deleted successfully.")
+        return super().delete(request, *args, **kwargs)
+
+
+class FeeRecordListView(LoginRequiredMixin, ListView):
+    model = FeeRecord
+    template_name = "management/fee_list.html"
+    context_object_name = "fee_records"
+    paginate_by = 10
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        status_filter = self.request.GET.get("status")
+        if status_filter:
+            queryset = queryset.filter(status=status_filter)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Fee List"
+        return context
+
+
+class FeeRecordDetailView(LoginRequiredMixin, DetailView):
+    model = FeeRecord
+    template_name = "management/fee_detail.html"
+    context_object_name = "fee_record"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Fee Detail"
+        fee_record = self.get_object()
+        context["student"] = fee_record.student
+        return context
+
+
+class FeeRecordCreateView(LoginRequiredMixin, CreateView):
+    model = FeeRecord
+    form_class = FeeRecordForm
+    template_name = "management/add_template.html"
+    success_url = reverse_lazy("fee_list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Create Fee Record"
+        return context
+
+
+class FeeRecordUpdateView(LoginRequiredMixin, UpdateView):
+    model = FeeRecord
+    form_class = FeeRecordForm
+    template_name = "management/update_template.html"
+    success_url = reverse_lazy("fee_list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Update Fee Record"
+        return context
+
+
+class FeeRecordDeleteView(LoginRequiredMixin, DeleteView):
+    model = FeeRecord
+    success_url = reverse_lazy("fee_list")
+
+    def get(self, request, *args, **kwargs):
+        return self.delete(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, "Librarian deleted successfully.")
         return super().delete(request, *args, **kwargs)

@@ -4,10 +4,6 @@ from django.forms.widgets import DateInput
 
 
 class BaseCustomUserForm(forms.ModelForm):
-    """
-    Base form incorporating features from both UserCreationForm and UserChangeForm
-    """
-
     password1 = forms.CharField(
         label="Password",
         widget=forms.PasswordInput,
@@ -23,7 +19,7 @@ class BaseCustomUserForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if not self.instance.pk:  # New user
+        if not self.instance.pk:
             self.fields["password1"].required = True
             self.fields["password2"].required = True
             self.fields["password1"].help_text = "Required. Enter a strong password."
@@ -38,7 +34,7 @@ class BaseCustomUserForm(forms.ModelForm):
         password1 = cleaned_data.get("password1")
         password2 = cleaned_data.get("password2")
 
-        if password1 or password2:  # If either password field is filled
+        if password1 or password2:
             if password1 != password2:
                 raise forms.ValidationError("Passwords don't match")
             if len(password1) < 8:
