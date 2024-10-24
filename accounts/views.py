@@ -11,6 +11,8 @@ from django.views.generic import (
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
+
+from management.models import Grade
 from .models import Admin, Staff, Librarian, Student
 from .forms import AdminForm, StaffForm, LibrarianForm, StudentForm
 
@@ -27,78 +29,6 @@ def user_redirect(request):
         return redirect("librarian_dashboard")
     else:
         raise Http404("You are not registered with the system")
-
-
-# class DepartmentListView(LoginRequiredMixin, ListView):
-#     model = Department
-#     template_name = "school/department/list.html"
-#     context_object_name = "departments"
-#     ordering = ["name"]
-#
-
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context["page_title"] = "Departments"
-#         return context
-
-
-# class DepartmentCreateView(LoginRequiredMixin, CreateView):
-#     model = Department
-#     form_class = DepartmentForm
-#     template_name = "school/department/form.html"
-#     success_url = reverse_lazy("department-list")
-
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context["page_title"] = "Create Department"
-#         context["button_text"] = "Create"
-#         return context
-
-#     def form_valid(self, form):
-#         try:
-#             response = super().form_valid(form)
-#             messages.success(self.request, "Department created successfully.")
-#             return response
-#         except Exception as e:
-#             messages.error(self.request, f"Error creating department: {str(e)}")
-#             return super().form_invalid(form)
-
-
-# class DepartmentUpdateView(LoginRequiredMixin, UpdateView):
-#     model = Department
-#     form_class = DepartmentForm
-#     template_name = "school/department/form.html"
-#     success_url = reverse_lazy("department-list")
-
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context["page_title"] = "Update Department"
-#         context["button_text"] = "Update"
-#         return context
-
-#     def form_valid(self, form):
-#         try:
-#             response = super().form_valid(form)
-#             messages.success(self.request, "Department updated successfully.")
-#             return response
-#         except Exception as e:
-#             messages.error(self.request, f"Error updating department: {str(e)}")
-#             return super().form_invalid(form)
-
-
-# class DepartmentDeleteView(LoginRequiredMixin, DeleteView):
-#     model = Department
-#     template_name = "school/department/confirm_delete.html"
-#     success_url = reverse_lazy("department-list")
-
-#     def delete(self, request, *args, **kwargs):
-#         try:
-#             response = super().delete(request, *args, **kwargs)
-#             messages.success(request, "Department deleted successfully.")
-#             return response
-#         except Exception as e:
-#             messages.error(request, f"Error deleting department: {str(e)}")
-#             return redirect("department-list")
 
 
 # Admin Views
@@ -118,7 +48,7 @@ class AdminDetailView(LoginRequiredMixin, DetailView):
     model = Admin
     template_name = "accounts/admin_detail.html"
     context_object_name = "admins"
-    user = Admin.objects.get(username='Admin')
+    user = Admin.objects.get(username="Admin")
     print(user.profile_picture)
 
     def get_context_data(self, **kwargs):
@@ -344,9 +274,24 @@ class StudentListView(LoginRequiredMixin, ListView):
     template_name = "accounts/student_list.html"
     context_object_name = "students"
 
+    def get_queryset(self):
+        queryset = Student.objects.all().select_related("grade")
+        grade_id = self.request.GET.get("grade")
+
+        if grade_id:
+            try:
+                queryset = queryset.filter(grade_id=int(grade_id))
+            except ValueError:
+                pass
+
+        return queryset.order_by(
+            "grade__standard", "grade__section"
+        )  # Changed to standard
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["page_title"] = "Student List"
+        context["grades"] = Grade.objects.filter(student__isnull=False).distinct()
+        context["selected_grade"] = self.request.GET.get("grade")
         return context
 
 

@@ -152,7 +152,6 @@ class FeeRecordListView(LoginRequiredMixin, ListView):
     model = FeeRecord
     template_name = "management/fee_list.html"
     context_object_name = "fee_records"
-    paginate_by = 10
 
     def get_queryset(self):
         queryset = super().get_queryset()

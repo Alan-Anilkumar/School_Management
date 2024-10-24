@@ -7,18 +7,28 @@ from django.views.generic import (
     UpdateView,
     DeleteView,
     DetailView,
+    TemplateView,
 )
-
-from management.models import Grade
 from .models import LibraryRecord, Book
 from .forms import LibraryRecordForm, BookForm
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
 
-class LibraryRecordListView(ListView):
+class LibrarianDashboard(TemplateView, LoginRequiredMixin):
+    template_name = "library/librarian_dashboard.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Librarian Dashboard"
+        return context
+
+
+class LibraryRecordListView(ListView, LoginRequiredMixin, PermissionRequiredMixin):
     model = LibraryRecord
     template_name = "library/record_list.html"
     context_object_name = "records"
+    permission_required = "library.view_libraryrecord"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -32,10 +42,11 @@ class LibraryRecordListView(ListView):
         return context
 
 
-class LibraryRecordCreateView(CreateView):
+class LibraryRecordCreateView(CreateView, LoginRequiredMixin, PermissionRequiredMixin):
     model = LibraryRecord
     form_class = LibraryRecordForm
     template_name = "library/add_template.html"
+    permission_required = "library.add_libraryrecord"
 
     success_url = reverse_lazy("record_list")
 
@@ -54,11 +65,12 @@ class LibraryRecordCreateView(CreateView):
         return redirect("record_list")
 
 
-class LibraryRecordUpdateView(UpdateView):
+class LibraryRecordUpdateView(UpdateView, LoginRequiredMixin, PermissionRequiredMixin):
     model = LibraryRecord
     form_class = LibraryRecordForm
     template_name = "library/update_template.html"
     success_url = reverse_lazy("record_list")
+    permission_required = "library.change_libraryrecord"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -94,9 +106,10 @@ class LibraryRecordUpdateView(UpdateView):
         return redirect("record_list")
 
 
-class LibraryRecordDeleteView(DeleteView):
+class LibraryRecordDeleteView(DeleteView, LoginRequiredMixin, PermissionRequiredMixin):
     model = LibraryRecord
     success_url = reverse_lazy("record_list")
+    permission_required = "library.delete_libraryrecord"
 
     def delete(self, request, *args, **kwargs):
         response = super().delete(request, *args, **kwargs)
@@ -105,17 +118,18 @@ class LibraryRecordDeleteView(DeleteView):
 
 
 # View details of a specific library record
-class LibraryRecordDetailView(DetailView):
+class LibraryRecordDetailView(DetailView, LoginRequiredMixin, PermissionRequiredMixin):
     model = LibraryRecord
     template_name = "library/record_detail.html"
     context_object_name = "record"
 
 
-class BookListView(ListView):
+class BookListView(ListView, LoginRequiredMixin, PermissionRequiredMixin):
     model = Book
     template_name = "library/book_list.html"
     context_object_name = "books"
     page_title = "Book List"
+    permission_required = "accounts.view_book"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -123,7 +137,7 @@ class BookListView(ListView):
         return context
 
 
-class BookDetailView(DetailView):
+class BookDetailView(DetailView, LoginRequiredMixin, PermissionRequiredMixin):
     model = Book
     template_name = "library/book_detail.html"
     context_object_name = "book"
@@ -135,12 +149,12 @@ class BookDetailView(DetailView):
         return context
 
 
-class BookCreateView(CreateView):
+class BookCreateView(CreateView, LoginRequiredMixin, PermissionRequiredMixin):
     model = Book
     form_class = BookForm
     template_name = "library/add_template.html"
     success_url = reverse_lazy("book_list")
-    page_title = "Add New Book"
+    permission_required = "library.add_book"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -156,12 +170,12 @@ class BookCreateView(CreateView):
         return super().form_invalid(form)
 
 
-class BookUpdateView(UpdateView):
+class BookUpdateView(UpdateView, LoginRequiredMixin, PermissionRequiredMixin):
     model = Book
     form_class = BookForm
     template_name = "library/update_template.html"
     success_url = reverse_lazy("book_list")
-    page_title = "Update Book"
+    permission_required = "library.change_book"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -177,10 +191,11 @@ class BookUpdateView(UpdateView):
         return super().form_invalid(form)
 
 
-class BookDeleteView(DeleteView):
+class BookDeleteView(DeleteView, LoginRequiredMixin, PermissionRequiredMixin):
     model = Book
     template_name = "library/book_confirm_delete.html"
     success_url = reverse_lazy("book_list")
+    permission_required = "library.delete_book"
 
     def form_valid(self, form):
         messages.success(self.request, "Book deleted successfully!")

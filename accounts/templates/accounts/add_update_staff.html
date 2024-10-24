@@ -12,7 +12,7 @@
                 </h4>
             </div>
             <div class="card-body">
-                <form id="StaffForm" method="post">
+                <form id="StaffForm" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     {{ form.non_field_errors }}
                     <div class="row mb-3">

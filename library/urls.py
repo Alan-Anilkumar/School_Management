@@ -2,6 +2,7 @@ from django.urls import path
 from .import views
 
 urlpatterns = [
+    path('librarian/dashboard/', views.LibrarianDashboard.as_view(), name='librarian_dashboard'),
     # library history
     path('records/', views.LibraryRecordListView.as_view(), name='record_list'),
     path('records/create/', views.LibraryRecordCreateView.as_view(), name='record_create'),

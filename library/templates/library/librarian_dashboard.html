@@ -1,0 +1,36 @@
+{% extends "authenticated_base.html" %}
+{% block content %}
+    <h1>Welcome to the School Management System</h1>
+    <h2>Hi {{ user.username }}!</h2>
+    <div class="col-md-12 mt-3">
+        <div class="card">
+            <div class="card-header bg-light">
+                <h5 class="card-title mb-0">Library Management</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="card bg-light">
+                            <div class="card-body text-center">
+                                <i class="bi bi-book-half fs-1 text-info mb-2"></i>
+                                <h5>Book Inventory</h5>
+                                <p class="mb-0">Total Books: {{ books_count }}</p>
+                                <a href="{% url 'book_list' %}" class="btn btn-info mt-3">Manage Books</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card bg-light">
+                            <div class="card-body text-center">
+                                <i class="bi bi-journal-text fs-1 text-info mb-2"></i>
+                                <h5>Library Records</h5>
+                                <p class="mb-0">Books To Return: {{ books_to_return }}</p>
+                                <a href="{% url 'record_list' %}" class="btn btn-info mt-3">View Records</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

@@ -1,0 +1,11 @@
+{% extends "authenticated_base.html" %}
+{% block content %}
+    <h1>Welcome to the School Management System</h1>
+    <h2>Hi {{ user.username }}!</h2>
+    <div class="text-end">
+            <a href="{% url 'student_list' %}" class="btn btn-info btn-block">Student List</a>
+            <a href="{% url 'record_list' %}" class="btn btn-warning btn-block">Library Record List</a>
+            <a href="{% url 'grade_list' %}" class="btn btn-info btn-block">Grade List</a>
+            <a href="{% url 'fee_list' %}" class="btn btn-success btn-block">Fee History</a>
+    </div>
+{% endblock content %}

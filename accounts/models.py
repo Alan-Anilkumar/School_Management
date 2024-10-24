@@ -78,6 +78,16 @@ class Librarian(User):
     class Meta:
         verbose_name = "Librarian"
         verbose_name_plural = "Librarians"
+        permissions = [
+            ("view_book", "Can view book"),
+            ("add_book", "Can add book"),
+            ("change_book", "Can change book"),
+            ("delete_book", "Can delete book"),
+            ("add_libraryrecord", "Can add library record"),
+            ("view_libraryrecord", "Can view library record"),
+            ("change_libraryrecord", "Can change library record"),
+            ("delete_libraryrecord", "Can delete library record"),
+        ]
 
     def save(self, *args, **kwargs):
         if not self.registration_id:

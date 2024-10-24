@@ -43,6 +43,9 @@ AUTH_USER_MODEL = "accounts.User"
 LOGIN_REDIRECT_URL = "user_redirect"
 LOGOUT_REDIRECT_URL = "login"
 
+SESSION_COOKIE_AGE = 1209600
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
