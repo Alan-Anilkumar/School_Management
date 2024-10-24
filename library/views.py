@@ -13,8 +13,11 @@ from .models import LibraryRecord, Book
 from .forms import LibraryRecordForm, BookForm
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.utils.decorators import method_decorator
+from accounts.decorators import role_required
 
 
+@method_decorator(role_required(allowed_roles=["librarian"]), name="dispatch")
 class LibrarianDashboard(TemplateView, LoginRequiredMixin):
     template_name = "library/librarian_dashboard.html"
 
@@ -24,6 +27,9 @@ class LibrarianDashboard(TemplateView, LoginRequiredMixin):
         return context
 
 
+@method_decorator(
+    role_required(allowed_roles=["admin", "staff", "librarian"]), name="dispatch"
+)
 class LibraryRecordListView(ListView, LoginRequiredMixin, PermissionRequiredMixin):
     model = LibraryRecord
     template_name = "library/record_list.html"
@@ -42,6 +48,9 @@ class LibraryRecordListView(ListView, LoginRequiredMixin, PermissionRequiredMixi
         return context
 
 
+@method_decorator(
+    role_required(allowed_roles=["admin", "staff", "librarian"]), name="dispatch"
+)
 class LibraryRecordCreateView(CreateView, LoginRequiredMixin, PermissionRequiredMixin):
     model = LibraryRecord
     form_class = LibraryRecordForm
@@ -65,6 +74,9 @@ class LibraryRecordCreateView(CreateView, LoginRequiredMixin, PermissionRequired
         return redirect("record_list")
 
 
+@method_decorator(
+    role_required(allowed_roles=["admin", "staff", "librarian"]), name="dispatch"
+)
 class LibraryRecordUpdateView(UpdateView, LoginRequiredMixin, PermissionRequiredMixin):
     model = LibraryRecord
     form_class = LibraryRecordForm
@@ -106,6 +118,9 @@ class LibraryRecordUpdateView(UpdateView, LoginRequiredMixin, PermissionRequired
         return redirect("record_list")
 
 
+@method_decorator(
+    role_required(allowed_roles=["admin", "staff", "librarian"]), name="dispatch"
+)
 class LibraryRecordDeleteView(DeleteView, LoginRequiredMixin, PermissionRequiredMixin):
     model = LibraryRecord
     success_url = reverse_lazy("record_list")
@@ -117,6 +132,9 @@ class LibraryRecordDeleteView(DeleteView, LoginRequiredMixin, PermissionRequired
         return response
 
 
+@method_decorator(
+    role_required(allowed_roles=["admin", "staff", "librarian"]), name="dispatch"
+)
 # View details of a specific library record
 class LibraryRecordDetailView(DetailView, LoginRequiredMixin, PermissionRequiredMixin):
     model = LibraryRecord
@@ -124,6 +142,9 @@ class LibraryRecordDetailView(DetailView, LoginRequiredMixin, PermissionRequired
     context_object_name = "record"
 
 
+@method_decorator(
+    role_required(allowed_roles=["admin", "staff", "librarian"]), name="dispatch"
+)
 class BookListView(ListView, LoginRequiredMixin, PermissionRequiredMixin):
     model = Book
     template_name = "library/book_list.html"
@@ -137,6 +158,9 @@ class BookListView(ListView, LoginRequiredMixin, PermissionRequiredMixin):
         return context
 
 
+@method_decorator(
+    role_required(allowed_roles=["admin", "staff", "librarian"]), name="dispatch"
+)
 class BookDetailView(DetailView, LoginRequiredMixin, PermissionRequiredMixin):
     model = Book
     template_name = "library/book_detail.html"
@@ -149,6 +173,9 @@ class BookDetailView(DetailView, LoginRequiredMixin, PermissionRequiredMixin):
         return context
 
 
+@method_decorator(
+    role_required(allowed_roles=["admin", "staff", "librarian"]), name="dispatch"
+)
 class BookCreateView(CreateView, LoginRequiredMixin, PermissionRequiredMixin):
     model = Book
     form_class = BookForm
@@ -170,6 +197,9 @@ class BookCreateView(CreateView, LoginRequiredMixin, PermissionRequiredMixin):
         return super().form_invalid(form)
 
 
+@method_decorator(
+    role_required(allowed_roles=["admin", "staff", "librarian"]), name="dispatch"
+)
 class BookUpdateView(UpdateView, LoginRequiredMixin, PermissionRequiredMixin):
     model = Book
     form_class = BookForm
@@ -191,6 +221,9 @@ class BookUpdateView(UpdateView, LoginRequiredMixin, PermissionRequiredMixin):
         return super().form_invalid(form)
 
 
+@method_decorator(
+    role_required(allowed_roles=["admin", "staff", "librarian"]), name="dispatch"
+)
 class BookDeleteView(DeleteView, LoginRequiredMixin, PermissionRequiredMixin):
     model = Book
     template_name = "library/book_confirm_delete.html"

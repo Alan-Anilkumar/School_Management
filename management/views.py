@@ -9,11 +9,15 @@ from django.views.generic import (
     DeleteView,
     DetailView,
 )
+
+from accounts.decorators import role_required
 from .models import Grade, FeeRecord, Department
 from .forms import GradeForm, DepartmentForm, FeeRecordForm
 from accounts.models import Staff
+from django.utils.decorators import method_decorator
 
 
+@method_decorator(role_required(allowed_roles=["admin", "staff"]), name="dispatch")
 class GradeListView(LoginRequiredMixin, ListView):
     model = Grade
     template_name = "management/grade_list.html"
@@ -27,6 +31,7 @@ class GradeListView(LoginRequiredMixin, ListView):
         return context
 
 
+@method_decorator(role_required(allowed_roles=["admin", "staff"]), name="dispatch")
 class GradeCreateView(LoginRequiredMixin, CreateView):
     model = Grade
     form_class = GradeForm
@@ -48,6 +53,7 @@ class GradeCreateView(LoginRequiredMixin, CreateView):
         return redirect("grade_list")
 
 
+@method_decorator(role_required(allowed_roles=["admin", "staff"]), name="dispatch")
 class GradeUpdateView(LoginRequiredMixin, UpdateView):
     model = Grade
     form_class = GradeForm
@@ -69,6 +75,7 @@ class GradeUpdateView(LoginRequiredMixin, UpdateView):
         return redirect("grade_list")
 
 
+@method_decorator(role_required(allowed_roles=["admin", "staff"]), name="dispatch")
 class GradeDeleteView(LoginRequiredMixin, DeleteView):
     model = Grade
     success_url = reverse_lazy("grade_list")
@@ -81,6 +88,7 @@ class GradeDeleteView(LoginRequiredMixin, DeleteView):
         return super().delete(request, *args, **kwargs)
 
 
+@method_decorator(role_required(allowed_roles=["admin"]), name="dispatch")
 class DepartmentListView(LoginRequiredMixin, ListView):
     model = Department
     template_name = "management/department_list.html"
@@ -93,6 +101,7 @@ class DepartmentListView(LoginRequiredMixin, ListView):
         return context
 
 
+@method_decorator(role_required(allowed_roles=["admin"]), name="dispatch")
 class DepartmentCreateView(LoginRequiredMixin, CreateView):
     model = Department
     form_class = DepartmentForm
@@ -115,6 +124,7 @@ class DepartmentCreateView(LoginRequiredMixin, CreateView):
         return redirect("department_list")
 
 
+@method_decorator(role_required(allowed_roles=["admin"]), name="dispatch")
 class DepartmentUpdateView(LoginRequiredMixin, UpdateView):
     model = Department
     form_class = DepartmentForm
@@ -136,6 +146,7 @@ class DepartmentUpdateView(LoginRequiredMixin, UpdateView):
         return redirect("department_list")
 
 
+@method_decorator(role_required(allowed_roles=["admin"]), name="dispatch")
 class DepartmentDeleteView(LoginRequiredMixin, DeleteView):
     model = Department
     success_url = reverse_lazy("department_list")
@@ -148,6 +159,15 @@ class DepartmentDeleteView(LoginRequiredMixin, DeleteView):
         return super().delete(request, *args, **kwargs)
 
 
+@method_decorator(
+    role_required(
+        allowed_roles=[
+            "admin",
+            "staff",
+        ]
+    ),
+    name="dispatch",
+)
 class FeeRecordListView(LoginRequiredMixin, ListView):
     model = FeeRecord
     template_name = "management/fee_list.html"
@@ -166,6 +186,15 @@ class FeeRecordListView(LoginRequiredMixin, ListView):
         return context
 
 
+@method_decorator(
+    role_required(
+        allowed_roles=[
+            "admin",
+            "staff",
+        ]
+    ),
+    name="dispatch",
+)
 class FeeRecordDetailView(LoginRequiredMixin, DetailView):
     model = FeeRecord
     template_name = "management/fee_detail.html"
@@ -179,6 +208,15 @@ class FeeRecordDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
+@method_decorator(
+    role_required(
+        allowed_roles=[
+            "admin",
+            "staff",
+        ]
+    ),
+    name="dispatch",
+)
 class FeeRecordCreateView(LoginRequiredMixin, CreateView):
     model = FeeRecord
     form_class = FeeRecordForm
@@ -191,6 +229,15 @@ class FeeRecordCreateView(LoginRequiredMixin, CreateView):
         return context
 
 
+@method_decorator(
+    role_required(
+        allowed_roles=[
+            "admin",
+            "staff",
+        ]
+    ),
+    name="dispatch",
+)
 class FeeRecordUpdateView(LoginRequiredMixin, UpdateView):
     model = FeeRecord
     form_class = FeeRecordForm
@@ -203,6 +250,15 @@ class FeeRecordUpdateView(LoginRequiredMixin, UpdateView):
         return context
 
 
+@method_decorator(
+    role_required(
+        allowed_roles=[
+            "admin",
+            "staff",
+        ]
+    ),
+    name="dispatch",
+)
 class FeeRecordDeleteView(LoginRequiredMixin, DeleteView):
     model = FeeRecord
     success_url = reverse_lazy("fee_list")

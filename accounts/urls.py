@@ -5,6 +5,7 @@ from . import views
 
 urlpatterns = [
     path("redirect/", views.user_redirect, name="user_redirect"),
+    # Admin
     path('admin/list/', views.AdminListView.as_view(), name='admin_list'),
     path('admin/detail/<int:pk>/', views.AdminDetailView.as_view(), name='admin_detail'),
     path('admin/create/', views.AdminCreateView.as_view(), name='admin_create'),

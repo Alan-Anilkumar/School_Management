@@ -1,4 +1,5 @@
 from django.shortcuts import redirect
+from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.views.generic import (
@@ -12,6 +13,7 @@ from django.contrib import messages
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from accounts.decorators import role_required
 from management.models import Grade
 from .models import Admin, Staff, Librarian, Student
 from .forms import AdminForm, StaffForm, LibrarianForm, StudentForm
@@ -32,6 +34,7 @@ def user_redirect(request):
 
 
 # Admin Views
+@method_decorator(role_required(allowed_roles=["admin"]), name="dispatch")
 class AdminListView(LoginRequiredMixin, ListView):
     model = Admin
     template_name = "accounts/admin_list.html"
@@ -44,6 +47,7 @@ class AdminListView(LoginRequiredMixin, ListView):
         return context
 
 
+@method_decorator(role_required(allowed_roles=["admin"]), name="dispatch")
 class AdminDetailView(LoginRequiredMixin, DetailView):
     model = Admin
     template_name = "accounts/admin_detail.html"
@@ -57,6 +61,7 @@ class AdminDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
+@method_decorator(role_required(allowed_roles=["admin"]), name="dispatch")
 class AdminCreateView(LoginRequiredMixin, CreateView):
     model = Admin
     form_class = AdminForm
@@ -79,6 +84,7 @@ class AdminCreateView(LoginRequiredMixin, CreateView):
         return redirect("admin_list")
 
 
+@method_decorator(role_required(allowed_roles=["admin"]), name="dispatch")
 class AdminUpdateView(LoginRequiredMixin, UpdateView):
     model = Admin
     form_class = AdminForm
@@ -101,6 +107,7 @@ class AdminUpdateView(LoginRequiredMixin, UpdateView):
         return redirect("admin_list")
 
 
+@method_decorator(role_required(allowed_roles=["admin"]), name="dispatch")
 class AdminDeleteView(LoginRequiredMixin, DeleteView):
     model = Admin
     success_url = reverse_lazy("admin_list")
@@ -114,6 +121,7 @@ class AdminDeleteView(LoginRequiredMixin, DeleteView):
 
 
 # Staff Views
+@method_decorator(role_required(allowed_roles=["admin"]), name="dispatch")
 class StaffListView(LoginRequiredMixin, ListView):
     model = Staff
     template_name = "accounts/staff_list.html"
@@ -126,6 +134,7 @@ class StaffListView(LoginRequiredMixin, ListView):
         return context
 
 
+@method_decorator(role_required(allowed_roles=["admin"]), name="dispatch")
 class StaffDetailView(DetailView):
     model = Staff
     template_name = "accounts/staff_detail.html"
@@ -137,6 +146,7 @@ class StaffDetailView(DetailView):
         return context
 
 
+@method_decorator(role_required(allowed_roles=["admin"]), name="dispatch")
 class StaffCreateView(LoginRequiredMixin, CreateView):
     model = Staff
     form_class = StaffForm
@@ -158,6 +168,7 @@ class StaffCreateView(LoginRequiredMixin, CreateView):
         return redirect("staff_list")
 
 
+@method_decorator(role_required(allowed_roles=["admin"]), name="dispatch")
 class StaffUpdateView(LoginRequiredMixin, UpdateView):
     model = Staff
     form_class = StaffForm
@@ -179,6 +190,7 @@ class StaffUpdateView(LoginRequiredMixin, UpdateView):
         return redirect("staff_list")
 
 
+@method_decorator(role_required(allowed_roles=["admin"]), name="dispatch")
 class StaffDeleteView(LoginRequiredMixin, DeleteView):
     model = Staff
     success_url = reverse_lazy("staff_list")
@@ -190,6 +202,8 @@ class StaffDeleteView(LoginRequiredMixin, DeleteView):
         messages.success(request, "Librarian deleted successfully.")
         return super().delete(request, *args, **kwargs)
 
+
+@method_decorator(role_required(allowed_roles=["admin"]), name="dispatch")
 
 # Librarian Views
 class LibrarianListView(LoginRequiredMixin, ListView):
@@ -204,6 +218,7 @@ class LibrarianListView(LoginRequiredMixin, ListView):
         return context
 
 
+@method_decorator(role_required(allowed_roles=["admin"]), name="dispatch")
 class LibrarianDetailView(DetailView):
     model = Librarian
     template_name = "accounts/librarian_detail.html"
@@ -215,6 +230,7 @@ class LibrarianDetailView(DetailView):
         return context
 
 
+@method_decorator(role_required(allowed_roles=["admin"]), name="dispatch")
 class LibrarianCreateView(LoginRequiredMixin, CreateView):
     model = Librarian
     form_class = LibrarianForm
@@ -236,6 +252,7 @@ class LibrarianCreateView(LoginRequiredMixin, CreateView):
         return redirect("librarian_list")
 
 
+@method_decorator(role_required(allowed_roles=["admin"]), name="dispatch")
 class LibrarianUpdateView(LoginRequiredMixin, UpdateView):
     model = Librarian
     form_class = LibrarianForm
@@ -257,6 +274,7 @@ class LibrarianUpdateView(LoginRequiredMixin, UpdateView):
         return redirect("librarian_list")
 
 
+@method_decorator(role_required(allowed_roles=["admin"]), name="dispatch")
 class LibrarianDeleteView(LoginRequiredMixin, DeleteView):
     model = Librarian
     success_url = reverse_lazy("librarian_list")
@@ -269,6 +287,7 @@ class LibrarianDeleteView(LoginRequiredMixin, DeleteView):
         return super().delete(request, *args, **kwargs)
 
 
+@method_decorator(role_required(allowed_roles=["admin", "staff"]), name="dispatch")
 class StudentListView(LoginRequiredMixin, ListView):
     model = Student
     template_name = "accounts/student_list.html"
@@ -295,6 +314,7 @@ class StudentListView(LoginRequiredMixin, ListView):
         return context
 
 
+@method_decorator(role_required(allowed_roles=["admin", "staff"]), name="dispatch")
 class StudentDetailView(LoginRequiredMixin, DetailView):
     model = Student
     template_name = "accounts/student_detail.html"
@@ -306,6 +326,7 @@ class StudentDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
+@method_decorator(role_required(allowed_roles=["admin", "staff"]), name="dispatch")
 class StudentCreateView(LoginRequiredMixin, CreateView):
     model = Student
     template_name = "accounts/add_update_student.html"
@@ -328,6 +349,7 @@ class StudentCreateView(LoginRequiredMixin, CreateView):
         return self.render_to_response(self.get_context_data(form=form))
 
 
+@method_decorator(role_required(allowed_roles=["admin", "staff"]), name="dispatch")
 class StudentUpdateView(LoginRequiredMixin, UpdateView):
     model = Student
     template_name = "accounts/add_update_student.html"
@@ -349,6 +371,7 @@ class StudentUpdateView(LoginRequiredMixin, UpdateView):
         return self.render_to_response(self.get_context_data(form=form))
 
 
+@method_decorator(role_required(allowed_roles=["admin", "staff"]), name="dispatch")
 class StudentDeleteView(LoginRequiredMixin, DeleteView):
     model = Student
     success_url = reverse_lazy("student_list")

@@ -58,9 +58,6 @@
                             <div class="collapse navbar-collapse" id="navbarNav">
                                 <ul class="navbar-nav ms-auto">
                                     <li class="nav-item">
-                                        <a class="nav-link" href="#">Profile</a>
-                                    </li>
-                                    <li class="nav-item">
                                         <form action="{% url 'logout' %}" onclick="clearSession()" method="post" class="d-inline">
                                             {% csrf_token %}
                                             <button type="submit" class="btn btn-link nav-link">Log Out</button>
